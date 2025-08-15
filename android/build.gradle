@@ -1,0 +1,146 @@
+buildscript {
+  repositories {
+    google()
+    mavenCentral()
+  }
+
+dependencies {
+    implementation 'com.facebook.react:react-native:+'
+    implementation 'androidx.appcompat:appcompat:1.4.0'
+    
+    // 百度地图SDK
+    implementation(name: 'BaiduLBS_Android', ext: 'aar')
+    
+    // 百度SDK依赖
+    implementation 'com.android.support:design:28.0.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
+}
+
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+apply plugin: 'com.android.library'
+
+def getExtOrDefault(name) {
+  return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties['BaiduMap_' + name]
+}
+
+def getExtOrIntegerDefault(name) {
+  return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties['BaiduMap_' + name]).toInteger()
+}
+
+android {
+  compileSdkVersion getExtOrIntegerDefault('compileSdkVersion')
+
+  defaultConfig {
+    minSdkVersion getExtOrIntegerDefault('minSdkVersion')
+    targetSdkVersion getExtOrIntegerDefault('targetSdkVersion')
+    versionCode 1
+    versionName "1.0"
+  }
+
+  buildTypes {
+    release {
+      minifyEnabled false
+    }
+  }
+
+  lintOptions {
+    disable 'GradleCompatible'
+  }
+
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_11
+    targetCompatibility JavaVersion.VERSION_11
+  }
+}
+
+repositories {
+  mavenCentral()
+  google()
+
+  def found = false
+  def defaultDir = null
+  def androidSourcesName = 'React Native sources'
+
+  if (rootProject.ext.has('reactNativeAndroidRoot')) {
+    defaultDir = rootProject.ext.get('reactNativeAndroidRoot')
+  } else {
+    defaultDir = new File(
+      projectDir,
+      '/../../../node_modules/react-native/android'
+    )
+  }
+
+  if (defaultDir.exists()) {
+    maven {
+      url defaultDir.toString()
+      name androidSourcesName
+    }
+
+    logger.info(":${project.name}:reactNativeAndroidRoot ${defaultDir.canonicalPath}")
+    found = true
+  } else {
+    def parentDir = rootProject.projectDir
+
+    1.upto(5, {
+      if (found) return true
+      parentDir = parentDir.parentFile
+
+      def androidSourcesDir = new File(
+        parentDir,
+        'node_modules/react-native'
+      )
+
+      def androidPrebuiltBinaryDir = new File(
+        parentDir,
+        'node_modules/react-native/android'
+      )
+
+      if (androidPrebuiltBinaryDir.exists()) {
+        maven {
+          url androidPrebuiltBinaryDir.toString()
+          name androidSourcesName
+        }
+
+        logger.info(":${project.name}:reactNativeAndroidRoot ${androidPrebuiltBinaryDir.canonicalPath}")
+        found = true
+      } else if (androidSourcesDir.exists()) {
+        maven {
+          url androidSourcesDir.toString()
+          name androidSourcesName
+        }
+
+        logger.info(":${project.name}:reactNativeAndroidRoot ${androidSourcesDir.canonicalPath}")
+        found = true
+      }
+    })
+  }
+
+  if (!found) {
+    throw new GradleException(
+      "${project.name}: unable to locate React Native android sources. " +
+        "Ensure you have you installed React Native as a dependency in your project and try again."
+    )
+  }
+}
+
+dependencies {
+  // noinspection GradleDynamicVersion
+  implementation 'com.facebook.react:react-native:+'
+  
+  // AndroidX 依赖
+  implementation 'androidx.annotation:annotation:1.4.0'
+  implementation 'androidx.core:core:1.8.0'
+  implementation 'androidx.appcompat:appcompat:1.5.0'
+  
+  // 百度地图 SDK 依赖 - 需要手动添加 AAR 文件到 libs 目录
+  // implementation files('libs/BaiduLBS_Android.aar')
+  
+  // 如果使用 Maven 仓库中的百度 SDK (可选)
+  // implementation 'com.baidu.lbsyun:BaiduMapSDK_Map:7.6.0'
+  // implementation 'com.baidu.lbsyun:BaiduMapSDK_Location:9.5.2'
+}

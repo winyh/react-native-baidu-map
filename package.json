@@ -1,0 +1,172 @@
+{
+  "name": "@react-native/winyh-baidu-map",
+  "version": "1.0.0",
+  "description": "React Native Baidu Map library for Android",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "react-native": "src/index.ts",
+  "source": "src/index.ts",
+  "files": [
+    "src",
+    "lib",
+    "android",
+    "react-native-baidu-map.podspec",
+    "!lib/typescript_definitions",
+    "!**/__tests__",
+    "!**/__fixtures__",
+    "!**/__mocks__"
+  ],
+  "scripts": {
+    "build": "node scripts/build.js",
+    "clean": "rimraf lib coverage",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "type-check": "tsc --noEmit",
+    "lint": "node scripts/lint.js",
+    "lint:fix": "node scripts/lint.js --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx}\" \"example/**/*.{ts,tsx,js,jsx}\" \"__tests__/**/*.{ts,tsx,js,jsx}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx}\" \"example/**/*.{ts,tsx,js,jsx}\" \"__tests__/**/*.{ts,tsx,js,jsx}\"",
+    "version:patch": "node scripts/version.js patch",
+    "version:minor": "node scripts/version.js minor",
+    "version:major": "node scripts/version.js major",
+    "prepublishOnly": "npm run clean && npm run build && npm run test",
+    "prepare": "npm run build",
+    "prepack": "npm run build",
+    "example": "yarn --cwd example",
+    "pods": "cd example && pod-install --quiet",
+    "bootstrap": "yarn example && yarn && yarn pods",
+    "ci": "npm run lint && npm run type-check && npm run test:coverage && npm run build",
+    "release": "npm run ci && npm run version:patch"
+  },
+  "keywords": [
+    "react-native",
+    "baidu",
+    "map",
+    "location",
+    "android",
+    "ios"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/winyh/react-native-baidu-map.git"
+  },
+  "author": "winyh <winyh@example.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/winyh/react-native-baidu-map/issues"
+  },
+  "homepage": "https://github.com/winyh/react-native-baidu-map#readme",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "devDependencies": {
+    "@commitlint/config-conventional": "^17.0.2",
+    "@react-native-community/eslint-config": "^3.0.2",
+    "@release-it/conventional-changelog": "^5.0.0",
+    "@types/jest": "^28.1.2",
+    "@types/react": "~17.0.21",
+    "@types/react-native": "0.68.0",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/parser": "^5.0.0",
+    "commitlint": "^17.0.2",
+    "depcheck": "^1.4.3",
+    "eslint": "^8.4.1",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.31.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-native": "^4.0.0",
+    "husky": "^8.0.1",
+    "jest": "^28.1.1",
+    "pod-install": "^0.1.0",
+    "prettier": "^2.0.5",
+    "react": "17.0.2",
+    "react-native": "0.68.2",
+    "react-native-builder-bob": "^0.18.3",
+    "release-it": "^15.0.0",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.5.2",
+    "@testing-library/react-native": "^11.0.0",
+    "@testing-library/jest-native": "^5.0.0"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=7.0.0"
+  },
+  "jest": {
+    "preset": "react-native",
+    "setupFilesAfterEnv": ["<rootDir>/__tests__/setup.ts"],
+    "testPathIgnorePatterns": [
+      "<rootDir>/node_modules/",
+      "<rootDir>/android/",
+      "<rootDir>/ios/",
+      "<rootDir>/example/",
+      "<rootDir>/baidu/"
+    ],
+    "transformIgnorePatterns": [
+      "node_modules/(?!(react-native|@react-native|react-native-vector-icons)/)"
+    ],
+    "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json", "node"],
+    "collectCoverageFrom": [
+      "src/**/*.{ts,tsx}",
+      "!src/**/*.d.ts",
+      "!src/**/index.ts"
+    ],
+    "coverageDirectory": "coverage",
+    "coverageReporters": ["text", "lcov", "html"],
+    "coverageThreshold": {
+      "global": {
+        "branches": 80,
+        "functions": 80,
+        "lines": 80,
+        "statements": 80
+      }
+    }
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "release-it": {
+    "git": {
+      "commitMessage": "chore: release ${version}",
+      "tagName": "v${version}"
+    },
+    "npm": {
+      "publish": true
+    },
+    "github": {
+      "release": true
+    },
+    "plugins": {
+      "@release-it/conventional-changelog": {
+        "preset": "angular"
+      }
+    }
+  },
+  "react-native-builder-bob": {
+    "source": "src",
+    "output": "lib",
+    "targets": [
+      "commonjs",
+      "module",
+      [
+        "typescript",
+        {
+          "project": "tsconfig.build.json"
+        }
+      ]
+    ]
+  },
+  "codegenConfig": {
+    "name": "BaiduMapSpec",
+    "type": "modules",
+    "jsSrcsDir": "src"
+  }
+}
