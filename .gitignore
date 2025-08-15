@@ -63,12 +63,26 @@ lib/
 # krio
 .kiro
 
-# Baidu SDK临时文件和嵌套仓库
+# Baidu SDK - 排除大型示例项目和文档
+baidu/android/BaiduLBS_AndroidSDK_Sample/
+baidu/android/BaiduLoc_AndroidSDK_v9.5.2_Demo/
+baidu/android/BaiduMap_AndroidSDK_v7_6_5_Sample/
+baidu/android/doc/
+baidu/ios/BaiduMap_IOSSDK_v6.6.5_Sample/
+baidu/ios/doc/
+baidu/ios/iosmapsdk/
+
+# Baidu SDK临时文件
 baidu/**/.DS_Store
 baidu/**/Thumbs.db
 baidu/**/.git*
 baidu/**/node_modules/
 baidu/**/build/
 baidu/**/dist/
-baidu/android/BaiduLBS_AndroidSDK_Sample/BaiduLoc_AndroidSDK_v9.4.0_Demo/
-baidu/ios/BaiduMap_IOSSDK_v6.6.5_Sample/BMKObjectiveCDemo/
+baidu/**/*.log
+baidu/**/*.tmp
+baidu/**/*.cache
+
+# 保留核心SDK文件
+!baidu/android/BaiduLBS_Android_V7.6.5/
+!baidu/ios/BaiduMap_IOSSDK_v6.6.5_Frameworks/
