@@ -1,0 +1,67 @@
+# GitHub Pages 配置
+title: React Native 百度地图 SDK
+description: 功能完整、性能优异的 React Native 百度地图 SDK，支持 Android 和 iOS 双平台
+url: "https://winyh.github.io"
+baseurl: "/react-native-baidu-map"
+
+# 构建设置
+markdown: kramdown
+highlighter: rouge
+theme: minima
+
+# 插件
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+# 排除文件
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor
+  - .sass-cache
+  - .jekyll-cache
+  - gemfiles
+  - README.md
+
+# 包含文件
+include:
+  - _pages
+
+# 集合设置
+collections:
+  docs:
+    output: true
+    permalink: /:collection/:name/
+
+# 默认设置
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+  - scope:
+      path: ""
+      type: "docs"
+    values:
+      layout: "doc"
+
+# SEO 设置
+author: React Native 百度地图 SDK Team
+twitter:
+  username: react_native_baidu_map
+  card: summary_large_image
+
+# 社交链接
+github_username: winyh
+repository: winyh/react-native-baidu-map
+
+# 分析
+google_analytics: # 如果需要可以添加 Google Analytics ID
+
+# 其他设置
+timezone: Asia/Shanghai
+lang: zh-CN

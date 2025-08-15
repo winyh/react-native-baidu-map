@@ -238,6 +238,7 @@ export interface MapMethodResult<T = any> {
   success: boolean;
   data?: T;
   error?: BaiduMapError;
+  message?: string;
 }
 
 // 导出所有事件类型的联合类型

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API 文档 - React Native 百度地图 SDK</title>
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        .api-nav {
+            background: #f9fafb;
+            padding: 2rem 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .api-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .api-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            border: 2px solid transparent;
+        }
+        .api-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px rgba(0, 0, 0, 0.1);
+            border-color: #3b82f6;
+        }
+        .api-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        .api-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #1f2937;
+        }
+        .api-description {
+            color: #6b7280;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        .api-features {
+            list-style: none;
+            padding: 0;
+        }
+        .api-features li {
+            padding: 0.25rem 0;
+            color: #059669;
+            font-size: 0.9rem;
+        }
+        .api-features li:before {
+            content: "✓ ";
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <h1><a href="../index.html" style="text-decoration: none; color: inherit;">🗺️ React Native 百度地图 SDK</a></h1>
+            </div>
+            <div class="nav-links">
+                <a href="../index.html">首页</a>
+                <a href="../index.html#features">功能特性</a>
+                <a href="index.html">API 文档</a>
+                <a href="../index.html#examples">示例</a>
+                <a href="https://github.com/winyh/react-native-baidu-map" target="_blank">GitHub</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- API 导航 -->
+    <section class="api-nav">
+        <div class="container">
+            <h1 style="text-align: center; font-size: 2.5rem; margin-bottom: 1rem; color: #1f2937;">API 文档</h1>
+            <p style="text-align: center; font-size: 1.2rem; color: #6b7280; max-width: 600px; margin: 0 auto;">
+                完整的 React Native 百度地图 SDK API 参考文档，包含所有组件、模块和工具函数的详细说明。
+            </p>
+        </div>
+    </section>
+
+    <!-- API 文档列表 -->
+    <section style="padding: 80px 0;">
+        <div class="container">
+            <div class="api-grid">
+                <!-- 核心组件 -->
+                <a href="MapView.html" class="api-card">
+                    <span class="api-icon">🗺️</span>
+                    <h3 class="api-title">MapView 组件</h3>
+                    <p class="api-description">核心地图视图组件，提供地图显示和基础交互功能。</p>
+                    <ul class="api-features">
+                        <li>地图类型切换</li>
+                        <li>缩放级别控制</li>
+                        <li>中心点设置</li>
+                        <li>用户位置显示</li>
+                        <li>事件处理</li>
+                    </ul>
+                </a>
+
+                <a href="Marker.html" class="api-card">
+                    <span class="api-icon">📍</span>
+                    <h3 class="api-title">Marker 组件</h3>
+                    <p class="api-description">地图标记组件，支持自定义图标和信息窗口。</p>
+                    <ul class="api-features">
+                        <li>自定义标记图标</li>
+                        <li>标记拖拽</li>
+                        <li>信息窗口</li>
+                        <li>点击事件</li>
+                        <li>动画效果</li>
+                    </ul>
+                </a>
+
+                <!-- 功能模块 -->
+                <a href="GEOCODING_API.html" class="api-card">
+                    <span class="api-icon">🔍</span>
+                    <h3 class="api-title">地理编码 API</h3>
+                    <p class="api-description">地址解析和 POI 搜索功能模块。</p>
+                    <ul class="api-features">
+                        <li>地址转坐标</li>
+                        <li>坐标转地址</li>
+                        <li>POI 搜索</li>
+                        <li>周边搜索</li>
+                        <li>批量处理</li>
+                    </ul>
+                </a>
+
+                <a href="ROUTE_PLANNING_API.html" class="api-card">
+                    <span class="api-icon">🧭</span>
+                    <h3 class="api-title">路径规划 API</h3>
+                    <p class="api-description">路径规划和导航功能模块。</p>
+                    <ul class="api-features">
+                        <li>多种出行方式</li>
+                        <li>实时导航</li>
+                        <li>语音导航</li>
+                        <li>路径优化</li>
+                        <li>导航控制</li>
+                    </ul>
+                </a>
+
+                <a href="LocationModule.html" class="api-card">
+                    <span class="api-icon">📡</span>
+                    <h3 class="api-title">定位模块</h3>
+                    <p class="api-description">高精度定位和位置服务功能。</p>
+                    <ul class="api-features">
+                        <li>单次定位</li>
+                        <li>连续定位</li>
+                        <li>权限管理</li>
+                        <li>坐标转换</li>
+                        <li>定位配置</li>
+                    </ul>
+                </a>
+
+                <a href="BaiduMapModule.html" class="api-card">
+                    <span class="api-icon">⚙️</span>
+                    <h3 class="api-title">核心模块</h3>
+                    <p class="api-description">SDK 初始化和核心功能管理模块。</p>
+                    <ul class="api-features">
+                        <li>SDK 初始化</li>
+                        <li>API Key 配置</li>
+                        <li>版本信息</li>
+                        <li>状态管理</li>
+                        <li>错误处理</li>
+                    </ul>
+                </a>
+
+                <!-- 工具类 -->
+                <a href="CoordinateConverter.html" class="api-card">
+                    <span class="api-icon">🔄</span>
+                    <h3 class="api-title">坐标转换工具</h3>
+                    <p class="api-description">多坐标系转换和计算工具。</p>
+                    <ul class="api-features">
+                        <li>BD09 坐标系</li>
+                        <li>GCJ02 坐标系</li>
+                        <li>WGS84 坐标系</li>
+                        <li>距离计算</li>
+                        <li>精度保持</li>
+                    </ul>
+                </a>
+
+                <a href="PerformanceOptimizer.html" class="api-card">
+                    <span class="api-icon">⚡</span>
+                    <h3 class="api-title">性能优化工具</h3>
+                    <p class="api-description">内存管理和性能优化工具集。</p>
+                    <ul class="api-features">
+                        <li>内存管理</li>
+                        <li>渲染优化</li>
+                        <li>缓存策略</li>
+                        <li>性能监控</li>
+                        <li>自动调优</li>
+                    </ul>
+                </a>
+
+                <!-- 类型定义 -->
+                <a href="TypeDefinitions.html" class="api-card">
+                    <span class="api-icon">📝</span>
+                    <h3 class="api-title">类型定义</h3>
+                    <p class="api-description">完整的 TypeScript 类型定义参考。</p>
+                    <ul class="api-features">
+                        <li>接口定义</li>
+                        <li>枚举类型</li>
+                        <li>事件类型</li>
+                        <li>错误类型</li>
+                        <li>配置类型</li>
+                    </ul>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 快速开始 -->
+    <section style="background: #f9fafb; padding: 80px 0;">
+        <div class="container">
+            <h2 style="text-align: center; font-size: 2rem; margin-bottom: 2rem; color: #1f2937;">快速开始</h2>
+            <div style="max-width: 800px; margin: 0 auto; background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);">
+                <h3 style="margin-bottom: 1rem; color: #1f2937;">安装 SDK</h3>
+                <pre style="background: #1f2937; color: #e5e7eb; padding: 1rem; border-radius: 8px; overflow-x: auto;"><code>npm install react-native-baidu-map</code></pre>
+                
+                <h3 style="margin: 2rem 0 1rem; color: #1f2937;">基础使用</h3>
+                <pre style="background: #1f2937; color: #e5e7eb; padding: 1rem; border-radius: 8px; overflow-x: auto;"><code>import { MapView, Marker } from 'react-native-baidu-map';
+
+&lt;MapView
+  center={{ latitude: 39.9042, longitude: 116.4074 }}
+  zoom={15}
+&gt;
+  &lt;Marker
+    coordinate={{ latitude: 39.9042, longitude: 116.4074 }}
+    title="天安门"
+  /&gt;
+&lt;/MapView&gt;</code></pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <h3>React Native 百度地图 SDK</h3>
+                    <p>功能完整、性能优异的企业级地图解决方案</p>
+                </div>
+                <div class="footer-links">
+                    <div class="link-group">
+                        <h4>文档</h4>
+                        <a href="../SDK_SETUP.html">安装指南</a>
+                        <a href="index.html">API 参考</a>
+                        <a href="../index.html#examples">示例代码</a>
+                    </div>
+                    <div class="link-group">
+                        <h4>资源</h4>
+                        <a href="https://github.com/winyh/react-native-baidu-map" target="_blank">GitHub</a>
+                        <a href="https://www.npmjs.com/package/react-native-baidu-map" target="_blank">NPM</a>
+                        <a href="../CHANGELOG.html">更新日志</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 React Native 百度地图 SDK. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+</body>
+</html>

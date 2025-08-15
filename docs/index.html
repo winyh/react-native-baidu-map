@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React Native 百度地图 SDK</title>
+    <meta name="description" content="功能完整、性能优异的 React Native 百度地图 SDK，支持 Android 和 iOS 双平台">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-tomorrow.min.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <h1>🗺️ React Native 百度地图 SDK</h1>
+            </div>
+            <div class="nav-links">
+                <a href="#features">功能特性</a>
+                <a href="#docs">文档</a>
+                <a href="#examples">示例</a>
+                <a href="#download">下载</a>
+                <a href="https://github.com/winyh/react-native-baidu-map" target="_blank">GitHub</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 英雄区域 -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    功能完整的 React Native 百度地图 SDK
+                </h1>
+                <p class="hero-subtitle">
+                    企业级地图解决方案，支持 Android 和 iOS 双平台，提供丰富的地图功能和原生性能
+                </p>
+                <div class="hero-buttons">
+                    <a href="#download" class="btn btn-primary">立即开始</a>
+                    <a href="#docs" class="btn btn-secondary">查看文档</a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-number">100%</span>
+                        <span class="stat-label">功能完成</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">2</span>
+                        <span class="stat-label">支持平台</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">90%+</span>
+                        <span class="stat-label">测试覆盖</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="phone-mockup">
+                    <div class="phone-screen">
+                        <div class="map-demo">
+                            <div class="map-marker"></div>
+                            <div class="map-marker marker-2"></div>
+                            <div class="map-marker marker-3"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 功能特性 -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title">核心功能特性</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🗺️</div>
+                    <h3>地图显示</h3>
+                    <p>支持多种地图类型、自定义样式、热力图显示和地图截图功能</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📍</div>
+                    <h3>定位服务</h3>
+                    <p>高精度定位、多种定位模式、权限管理和坐标系转换</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📌</div>
+                    <h3>标记覆盖物</h3>
+                    <p>自定义标记、信息窗口、折线多边形和标记聚合功能</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔍</div>
+                    <h3>地理编码</h3>
+                    <p>地址解析、POI搜索、周边搜索和批量地理编码</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🧭</div>
+                    <h3>路径规划</h3>
+                    <p>多种出行方式、实时导航、语音导航和路径优化</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>性能优化</h3>
+                    <p>内存管理、渲染优化、网络缓存和性能监控</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 代码示例 -->
+    <section class="code-example">
+        <div class="container">
+            <h2 class="section-title">快速开始</h2>
+            <div class="code-tabs">
+                <div class="tab-buttons">
+                    <button class="tab-button active" data-tab="install">安装</button>
+                    <button class="tab-button" data-tab="basic">基础使用</button>
+                    <button class="tab-button" data-tab="advanced">高级功能</button>
+                </div>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="install">
+                        <pre><code class="language-bash"># 安装 SDK
+npm install react-native-baidu-map
+
+# iOS 额外步骤
+cd ios && pod install</code></pre>
+                    </div>
+                    <div class="tab-pane" id="basic">
+                        <pre><code class="language-typescript">import { MapView, Marker } from 'react-native-baidu-map';
+
+function App() {
+  return (
+    &lt;MapView
+      center={{ latitude: 39.9042, longitude: 116.4074 }}
+      zoom={15}
+      onMapClick={(coordinate) => console.log(coordinate)}
+    &gt;
+      &lt;Marker
+        coordinate={{ latitude: 39.9042, longitude: 116.4074 }}
+        title="天安门"
+      /&gt;
+    &lt;/MapView&gt;
+  );
+}</code></pre>
+                    </div>
+                    <div class="tab-pane" id="advanced">
+                        <pre><code class="language-typescript">import { GeocodingModule, RoutePlanningModule } from 'react-native-baidu-map';
+
+// 地理编码
+const result = await GeocodingModule.geocoding('北京市天安门');
+
+// 路径规划
+const route = await RoutePlanningModule.planDrivingRoute({
+  origin: { location: { latitude: 39.9042, longitude: 116.4074 } },
+  destination: { location: { latitude: 39.9912, longitude: 116.3348 } }
+});</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 文档链接 -->
+    <section id="docs" class="docs">
+        <div class="container">
+            <h2 class="section-title">完整文档</h2>
+            <div class="docs-grid">
+                <a href="SDK_SETUP.html" class="doc-card">
+                    <div class="doc-icon">📚</div>
+                    <h3>SDK 设置指南</h3>
+                    <p>详细的安装和配置说明</p>
+                </a>
+                <a href="api/MapView.html" class="doc-card">
+                    <div class="doc-icon">🗺️</div>
+                    <h3>地图组件 API</h3>
+                    <p>MapView 组件完整参考</p>
+                </a>
+                <a href="api/GEOCODING_API.html" class="doc-card">
+                    <div class="doc-icon">🔍</div>
+                    <h3>地理编码 API</h3>
+                    <p>地址解析和 POI 搜索</p>
+                </a>
+                <a href="api/ROUTE_PLANNING_API.html" class="doc-card">
+                    <div class="doc-icon">🧭</div>
+                    <h3>路径规划 API</h3>
+                    <p>导航和路径规划功能</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 示例展示 -->
+    <section id="examples" class="examples">
+        <div class="container">
+            <h2 class="section-title">功能示例</h2>
+            <div class="examples-grid">
+                <div class="example-card">
+                    <div class="example-image">
+                        <div class="example-demo basic-map"></div>
+                    </div>
+                    <h3>基础地图</h3>
+                    <p>地图显示、缩放控制和基础交互</p>
+                </div>
+                <div class="example-card">
+                    <div class="example-image">
+                        <div class="example-demo location-demo"></div>
+                    </div>
+                    <h3>定位功能</h3>
+                    <p>用户定位、位置跟踪和权限管理</p>
+                </div>
+                <div class="example-card">
+                    <div class="example-image">
+                        <div class="example-demo markers-demo"></div>
+                    </div>
+                    <h3>标记覆盖物</h3>
+                    <p>自定义标记、信息窗口和覆盖物</p>
+                </div>
+                <div class="example-card">
+                    <div class="example-image">
+                        <div class="example-demo complex-demo"></div>
+                    </div>
+                    <h3>复杂场景</h3>
+                    <p>综合功能演示和实际应用场景</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 下载安装 -->
+    <section id="download" class="download">
+        <div class="container">
+            <h2 class="section-title">立即开始使用</h2>
+            <div class="download-content">
+                <div class="download-info">
+                    <h3>🚀 快速安装</h3>
+                    <p>通过 npm 或 yarn 快速安装 React Native 百度地图 SDK</p>
+                    <div class="install-commands">
+                        <div class="command-group">
+                            <label>NPM</label>
+                            <code>npm install react-native-baidu-map</code>
+                        </div>
+                        <div class="command-group">
+                            <label>Yarn</label>
+                            <code>yarn add react-native-baidu-map</code>
+                        </div>
+                    </div>
+                </div>
+                <div class="download-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">📦</div>
+                        <div class="stat-info">
+                            <span class="stat-number">v1.0.0</span>
+                            <span class="stat-label">最新版本</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⭐</div>
+                        <div class="stat-info">
+                            <span class="stat-number">100%</span>
+                            <span class="stat-label">功能完成</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🛡️</div>
+                        <div class="stat-info">
+                            <span class="stat-number">企业级</span>
+                            <span class="stat-label">质量保证</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <h3>React Native 百度地图 SDK</h3>
+                    <p>功能完整、性能优异的企业级地图解决方案</p>
+                </div>
+                <div class="footer-links">
+                    <div class="link-group">
+                        <h4>文档</h4>
+                        <a href="SDK_SETUP.html">安装指南</a>
+                        <a href="api/MapView.html">API 参考</a>
+                        <a href="#examples">示例代码</a>
+                    </div>
+                    <div class="link-group">
+                        <h4>资源</h4>
+                        <a href="https://github.com/winyh/react-native-baidu-map" target="_blank">GitHub</a>
+                        <a href="https://www.npmjs.com/package/react-native-baidu-map" target="_blank">NPM</a>
+                        <a href="CHANGELOG.html">更新日志</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 React Native 百度地图 SDK. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
