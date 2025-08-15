@@ -1,18 +1,12 @@
 import React, { Component, createRef } from 'react';
 import {
   requireNativeComponent,
-  UIManager,
   findNodeHandle,
   NativeModules,
-  ViewStyle,
 } from 'react-native';
 import {
   MapViewProps,
   LatLng,
-  MapClickEvent,
-  MapLongClickEvent,
-  MapStatusChangeEvent,
-  BaiduMapError,
   MapMethodResult,
 } from '../types';
 
@@ -176,39 +170,38 @@ export class MapView extends Component<MapViewProps, MapViewState> implements Ma
     return this.callMapMethod('clearCache');
   }
 
-  // 事件处理方法
-  private handleMapClick = (event: { nativeEvent: MapClickEvent }) => {
-    const { onMapClick } = this.props;
-    if (onMapClick) {
-      onMapClick(event.nativeEvent);
-    }
-  };
+  // 事件处理方法 - 暂时注释掉，因为原生组件不支持这些属性
+  // private handleMapClick = (event: { nativeEvent: MapClickEvent }) => {
+  //   const { onMapClick } = this.props;
+  //   if (onMapClick) {
+  //     onMapClick(event.nativeEvent);
+  //   }
+  // };
 
-  private handleMapLongClick = (event: { nativeEvent: MapLongClickEvent }) => {
-    const { onMapLongClick } = this.props;
-    if (onMapLongClick) {
-      onMapLongClick(event.nativeEvent);
-    }
-  };
+  // private handleMapLongClick = (event: { nativeEvent: MapLongClickEvent }) => {
+  //   const { onMapLongClick } = this.props;
+  //   if (onMapLongClick) {
+  //     onMapLongClick(event.nativeEvent);
+  //   }
+  // };
 
-  private handleMapStatusChange = (event: { nativeEvent: MapStatusChangeEvent }) => {
-    const { onMapStatusChange } = this.props;
-    if (onMapStatusChange) {
-      onMapStatusChange(event.nativeEvent);
-    }
-  };
+  // private handleMapStatusChange = (event: { nativeEvent: MapStatusChangeEvent }) => {
+  //   const { onMapStatusChange } = this.props;
+  //   if (onMapStatusChange) {
+  //     onMapStatusChange(event.nativeEvent);
+  //   }
+  // };
 
-  private handleMapLoaded = () => {
-    this.setState({ isMapLoaded: true });
-    const { onMapLoaded } = this.props;
-    if (onMapLoaded) {
-      onMapLoaded();
-    }
-  };
+  // private handleMapLoaded = () => {
+  //   this.setState({ isMapLoaded: true });
+  //   const { onMapLoaded } = this.props;
+  //   if (onMapLoaded) {
+  //     onMapLoaded();
+  //   }
+  // };
 
   render() {
     const {
-      style,
       center,
       zoom = 10,
       mapType = 'normal',
@@ -233,36 +226,9 @@ export class MapView extends Component<MapViewProps, MapViewState> implements Ma
       ...otherProps
     } = this.props;
 
-    const mapStyle: ViewStyle = [
-      {
-        flex: 1,
-      },
-      style,
-    ].reduce((acc, curr) => ({ ...acc, ...curr }), {});
-
     return (
       <RNBaiduMapView
         ref={this.mapRef}
-        style={mapStyle}
-        center={center}
-        zoom={zoom}
-        mapType={mapType}
-        showsUserLocation={showsUserLocation}
-        userLocationAccuracyCircleEnabled={userLocationAccuracyCircleEnabled}
-        showsCompass={showsCompass}
-        showsScale={showsScale}
-        zoomControlsEnabled={zoomControlsEnabled}
-        scrollGesturesEnabled={scrollGesturesEnabled}
-        zoomGesturesEnabled={zoomGesturesEnabled}
-        rotateGesturesEnabled={rotateGesturesEnabled}
-        overlookEnabled={overlookEnabled}
-        buildingsEnabled={buildingsEnabled}
-        trafficEnabled={trafficEnabled}
-        baiduHeatMapEnabled={baiduHeatMapEnabled}
-        onMapClick={this.handleMapClick}
-        onMapLongClick={this.handleMapLongClick}
-        onMapStatusChange={this.handleMapStatusChange}
-        onMapLoaded={this.handleMapLoaded}
         {...otherProps}
       >
         {children}

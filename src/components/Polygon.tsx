@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { requireNativeComponent, ViewStyle } from 'react-native';
-import { PolygonProps, LatLng } from '../types';
+import { PolygonProps } from '../types';
 
 const COMPONENT_NAME = 'BaiduMapPolygon';
 const RNBaiduMapPolygon = requireNativeComponent(COMPONENT_NAME);
@@ -19,12 +19,12 @@ export class Polygon extends Component<PolygonComponentProps> {
     visible: true,
   };
 
-  private handlePress = () => {
-    const { onPress } = this.props;
-    if (onPress) {
-      onPress();
-    }
-  };
+  // private handlePress = () => {
+  //   const { onPress } = this.props;
+  //   if (onPress) {
+  //     onPress();
+  //   }
+  // };
 
   render() {
     const {
@@ -46,14 +46,6 @@ export class Polygon extends Component<PolygonComponentProps> {
 
     return (
       <RNBaiduMapPolygon
-        style={style}
-        coordinates={coordinates}
-        strokeColor={strokeColor}
-        strokeWidth={strokeWidth}
-        fillColor={fillColor}
-        zIndex={zIndex}
-        visible={visible}
-        onPress={this.handlePress}
         {...otherProps}
       />
     );

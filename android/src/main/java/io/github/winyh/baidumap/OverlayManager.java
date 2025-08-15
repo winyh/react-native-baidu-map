@@ -3,6 +3,18 @@ package io.github.winyh.baidumap;
 import android.graphics.Color;
 import android.util.Log;
 
+import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.map.Circle;
+import com.baidu.mapapi.map.CircleOptions;
+import com.baidu.mapapi.map.Overlay;
+import com.baidu.mapapi.map.OverlayOptions;
+import com.baidu.mapapi.map.Polygon;
+import com.baidu.mapapi.map.PolygonOptions;
+import com.baidu.mapapi.map.Polyline;
+import com.baidu.mapapi.map.PolylineOptions;
+import com.baidu.mapapi.map.Stroke;
+import com.baidu.mapapi.model.LatLng;
+
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReadableArray;
@@ -25,14 +37,14 @@ public class OverlayManager {
     private Map<String, OverlayInfo> overlays = new HashMap<>();
     private AtomicInteger overlayIdGenerator = new AtomicInteger(0);
     
-    // TODO: 百度地图相关对象
-    // private BaiduMap baiduMap;
-    // private Map<String, Overlay> baiduOverlays = new HashMap<>();
+    // 百度地图相关对象
+    private BaiduMap baiduMap;
+    private Map<String, Overlay> baiduOverlays = new HashMap<>();
 
     public OverlayManager(ReactContext reactContext, BaiduMapView mapView) {
         this.reactContext = reactContext;
         this.mapView = mapView;
-        // this.baiduMap = mapView.getBaiduMap();
+        this.baiduMap = mapView.getBaiduMap();
     }
 
     /**
@@ -45,9 +57,6 @@ public class OverlayManager {
             
             Log.d(TAG, "Adding polyline: " + overlayId);
             
-            // TODO: 创建百度地图折线
-            // 当百度地图 SDK 集成后，取消注释以下代码：
-            /*
             List<LatLng> points = parseCoordinates(polylineOptions.getArray("coordinates"));
             if (points.size() < 2) {
                 Log.w(TAG, "Polyline requires at least 2 points");
@@ -70,7 +79,6 @@ public class OverlayManager {
             
             Polyline polyline = (Polyline) baiduMap.addOverlay(options);
             baiduOverlays.put(overlayId, polyline);
-            */
             
             overlays.put(overlayId, overlayInfo);
             
@@ -93,9 +101,6 @@ public class OverlayManager {
             
             Log.d(TAG, "Adding polygon: " + overlayId);
             
-            // TODO: 创建百度地图多边形
-            // 当百度地图 SDK 集成后，取消注释以下代码：
-            /*
             List<LatLng> points = parseCoordinates(polygonOptions.getArray("coordinates"));
             if (points.size() < 3) {
                 Log.w(TAG, "Polygon requires at least 3 points");
@@ -109,7 +114,6 @@ public class OverlayManager {
             
             Polygon polygon = (Polygon) baiduMap.addOverlay(options);
             baiduOverlays.put(overlayId, polygon);
-            */
             
             overlays.put(overlayId, overlayInfo);
             
@@ -132,9 +136,6 @@ public class OverlayManager {
             
             Log.d(TAG, "Adding circle: " + overlayId);
             
-            // TODO: 创建百度地图圆形
-            // 当百度地图 SDK 集成后，取消注释以下代码：
-            /*
             ReadableMap center = circleOptions.getMap("center");
             if (center == null) {
                 Log.w(TAG, "Circle requires center coordinate");
@@ -156,7 +157,6 @@ public class OverlayManager {
             
             Circle circle = (Circle) baiduMap.addOverlay(options);
             baiduOverlays.put(overlayId, circle);
-            */
             
             overlays.put(overlayId, overlayInfo);
             
@@ -185,9 +185,7 @@ public class OverlayManager {
             // 更新覆盖物信息
             overlayInfo.updateFromReadableMap(options);
             
-            // TODO: 更新百度地图覆盖物
-            // 当百度地图 SDK 集成后，取消注释以下代码：
-            /*
+            // 更新百度地图覆盖物
             Overlay baiduOverlay = baiduOverlays.get(overlayId);
             if (baiduOverlay != null) {
                 // 根据覆盖物类型进行相应的更新
@@ -204,7 +202,6 @@ public class OverlayManager {
                         break;
                 }
             }
-            */
             
             Log.d(TAG, "Overlay updated successfully: " + overlayId);
             return true;
@@ -228,15 +225,12 @@ public class OverlayManager {
             
             Log.d(TAG, "Removing overlay: " + overlayId);
             
-            // TODO: 从百度地图中删除覆盖物
-            // 当百度地图 SDK 集成后，取消注释以下代码：
-            /*
+            // 从百度地图中删除覆盖物
             Overlay baiduOverlay = baiduOverlays.get(overlayId);
             if (baiduOverlay != null) {
                 baiduOverlay.remove();
                 baiduOverlays.remove(overlayId);
             }
-            */
             
             overlays.remove(overlayId);
             
@@ -256,14 +250,11 @@ public class OverlayManager {
         try {
             Log.d(TAG, "Removing all overlays");
             
-            // TODO: 从百度地图中删除所有覆盖物
-            // 当百度地图 SDK 集成后，取消注释以下代码：
-            /*
+            // 从百度地图中删除所有覆盖物
             for (Overlay overlay : baiduOverlays.values()) {
                 overlay.remove();
             }
             baiduOverlays.clear();
-            */
             
             overlays.clear();
             
@@ -277,7 +268,6 @@ public class OverlayManager {
     /**
      * 解析坐标数组
      */
-    /*
     private List<LatLng> parseCoordinates(ReadableArray coordinates) {
         List<LatLng> points = new ArrayList<>();
         
@@ -294,7 +284,6 @@ public class OverlayManager {
         
         return points;
     }
-    */
 
     /**
      * 解析虚线样式

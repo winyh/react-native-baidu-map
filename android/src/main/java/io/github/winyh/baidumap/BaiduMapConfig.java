@@ -75,24 +75,14 @@ public class BaiduMapConfig {
      * 获取百度地图类型常量
      */
     public static int getBaiduMapType(String mapType) {
-        // TODO: 当集成百度 SDK 后，返回对应的常量
-        // switch (mapType) {
-        //     case MAP_TYPE_SATELLITE:
-        //         return BaiduMap.MAP_TYPE_SATELLITE;
-        //     case MAP_TYPE_HYBRID:
-        //         return BaiduMap.MAP_TYPE_HYBRID;
-        //     default:
-        //         return BaiduMap.MAP_TYPE_NORMAL;
-        // }
-        
-        // 临时返回值
+        // 当集成百度 SDK 后，返回对应的常量
         switch (mapType) {
             case MAP_TYPE_SATELLITE:
-                return 2;
+                return 2; // BaiduMap.MAP_TYPE_SATELLITE
             case MAP_TYPE_HYBRID:
-                return 3;
+                return 3; // BaiduMap.MAP_TYPE_HYBRID
             default:
-                return 1;
+                return 1; // BaiduMap.MAP_TYPE_NORMAL
         }
     }
     
@@ -100,17 +90,14 @@ public class BaiduMapConfig {
      * 获取百度定位模式常量
      */
     public static String getBaiduLocationMode(String locationMode) {
-        // TODO: 当集成百度定位 SDK 后，返回对应的模式
-        // switch (locationMode) {
-        //     case LOCATION_MODE_BATTERY_SAVING:
-        //         return LocationClientOption.LocationMode.Battery_Saving;
-        //     case LOCATION_MODE_DEVICE_SENSORS:
-        //         return LocationClientOption.LocationMode.Device_Sensors;
-        //     default:
-        //         return LocationClientOption.LocationMode.Hight_Accuracy;
-        // }
-        
-        // 临时返回原值
-        return locationMode;
+        // 当集成百度定位 SDK 后，返回对应的模式
+        switch (locationMode) {
+            case LOCATION_MODE_BATTERY_SAVING:
+                return "Battery_Saving"; // LocationClientOption.LocationMode.Battery_Saving
+            case LOCATION_MODE_DEVICE_SENSORS:
+                return "Device_Sensors"; // LocationClientOption.LocationMode.Device_Sensors
+            default:
+                return "Hight_Accuracy"; // LocationClientOption.LocationMode.Hight_Accuracy
+        }
     }
 }

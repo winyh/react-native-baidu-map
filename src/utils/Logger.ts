@@ -400,8 +400,8 @@ export class Logger {
    */
   private static getSystemInfo(): any {
     const info: any = {
-      userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'Unknown',
-      platform: typeof navigator !== 'undefined' ? navigator.platform : 'Unknown',
+      userAgent: 'React Native',
+      platform: 'React Native',
       timestamp: new Date().toISOString(),
     };
 

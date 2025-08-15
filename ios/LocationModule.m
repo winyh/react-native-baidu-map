@@ -72,14 +72,48 @@ RCT_EXPORT_METHOD(getCurrentLocation:(NSDictionary *)options
     self.locationResolve = resolve;
     self.locationReject = reject;
     
-    // TODO: 使用百度定位SDK获取位置
+    // 使用百度定位SDK获取位置
     // 当集成百度定位iOS SDK后，取消注释以下代码：
     /*
     BMKLocationManager *locationManager = [[BMKLocationManager alloc] init];
+    locationManager.coordinateType = BMKLocationCoordinateTypeBMK09LL;
+    locationManager.distanceFilter = kCLDistanceFilterNone;
+    locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+    locationManager.activityType = CLActivityTypeOther;
+    locationManager.pausesLocationUpdatesAutomatically = NO;
+    locationManager.locationTimeout = 10;
+    locationManager.reGeocodeTimeout = 10;
+    
+    // 设置定位精度
+    if (options[@"accuracy"]) {
+        NSString *accuracy = options[@"accuracy"];
+        if ([accuracy isEqualToString:@"high"]) {
+            locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+        } else if ([accuracy isEqualToString:@"medium"]) {
+            locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters;
+        } else {
+            locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
+        }
+    }
+    
+    // 设置超时时间
+    if (options[@"timeout"]) {
+        locationManager.locationTimeout = [options[@"timeout"] intValue] / 1000;
+    }
+    
     [locationManager requestLocationWithReGeocode:YES withNetworkState:YES completionBlock:^(BMKLocation * _Nullable location, BMKLocationNetworkState state, NSError * _Nullable error) {
         if (error) {
             if (self.locationReject) {
-                self.locationReject(@"LOCATION_ERROR", error.localizedDescription, error);
+                NSString *errorCode = @"LOCATION_ERROR";
+                if (error.code == kCLErrorLocationUnknown) {
+                    errorCode = @"LOCATION_UNAVAILABLE";
+                } else if (error.code == kCLErrorDenied) {
+                    errorCode = @"LOCATION_PERMISSION_DENIED";
+                } else if (error.code == kCLErrorNetwork) {
+                    errorCode = @"NETWORK_ERROR";
+                }
+                
+                self.locationReject(errorCode, error.localizedDescription, error);
                 self.locationReject = nil;
                 self.locationResolve = nil;
             }
@@ -98,7 +132,13 @@ RCT_EXPORT_METHOD(getCurrentLocation:(NSDictionary *)options
             @"province": location.rgcData.province ?: @"",
             @"city": location.rgcData.city ?: @"",
             @"district": location.rgcData.district ?: @"",
-            @"street": location.rgcData.street ?: @""
+            @"street": location.rgcData.street ?: @"",
+            @"streetNumber": location.rgcData.streetNumber ?: @"",
+            @"cityCode": @(location.rgcData.cityCode),
+            @"adCode": location.rgcData.adCode ?: @"",
+            @"countryCode": location.rgcData.countryCode ?: @"",
+            @"country": location.rgcData.country ?: @"",
+            @"locationDescribe": location.rgcData.locationDescribe ?: @""
         };
         
         if (self.locationResolve) {
@@ -151,8 +191,22 @@ RCT_EXPORT_METHOD(startLocationUpdates:(NSDictionary *)options
         self.locationManager.distanceFilter = [options[@"distanceFilter"] doubleValue];
     }
     
-    // TODO: 使用百度定位SDK开始连续定位
+    // 使用百度定位SDK开始连续定位
     // 当集成百度定位iOS SDK后，实现连续定位功能
+    /*
+    BMKLocationManager *baiduLocationManager = [[BMKLocationManager alloc] init];
+    baiduLocationManager.delegate = self;
+    baiduLocationManager.coordinateType = BMKLocationCoordinateTypeBMK09LL;
+    baiduLocationManager.distanceFilter = self.locationManager.distanceFilter;
+    baiduLocationManager.desiredAccuracy = self.locationManager.desiredAccuracy;
+    baiduLocationManager.activityType = CLActivityTypeOther;
+    baiduLocationManager.pausesLocationUpdatesAutomatically = NO;
+    baiduLocationManager.allowsBackgroundLocationUpdates = NO;
+    baiduLocationManager.locationTimeout = 10;
+    baiduLocationManager.reGeocodeTimeout = 10;
+    
+    [baiduLocationManager startUpdatingLocation];
+    */
     
     // 使用系统定位服务开始连续定位
     [self.locationManager startUpdatingLocation];
@@ -169,8 +223,15 @@ RCT_EXPORT_METHOD(stopLocationUpdates:(RCTPromiseResolveBlock)resolve
         return;
     }
     
-    // TODO: 停止百度定位SDK连续定位
+    // 停止百度定位SDK连续定位
     // 当集成百度定位iOS SDK后，实现停止定位功能
+    /*
+    if (self.baiduLocationManager) {
+        [self.baiduLocationManager stopUpdatingLocation];
+        self.baiduLocationManager.delegate = nil;
+        self.baiduLocationManager = nil;
+    }
+    */
     
     // 停止系统定位服务
     [self.locationManager stopUpdatingLocation];

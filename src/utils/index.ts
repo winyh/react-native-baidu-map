@@ -8,4 +8,4 @@ export { DebugPanel, ErrorTracker } from './DebugPanel';
 export { LogVisualization, LogAnalyzer } from './LogVisualization';
 export { MapUtils } from './MapUtils';
 export { ErrorHandler } from './ErrorHandler';
-export { checkLocationPermission, requestLocationPermission } from './permissions';
+export { PermissionManager } from './permissions';

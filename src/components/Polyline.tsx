@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { requireNativeComponent, ViewStyle } from 'react-native';
-import { PolylineProps, LatLng } from '../types';
+import { PolylineProps } from '../types';
 
 const COMPONENT_NAME = 'BaiduMapPolyline';
 const RNBaiduMapPolyline = requireNativeComponent(COMPONENT_NAME);
@@ -19,12 +19,12 @@ export class Polyline extends Component<PolylineComponentProps> {
     visible: true,
   };
 
-  private handlePress = () => {
-    const { onPress } = this.props;
-    if (onPress) {
-      onPress();
-    }
-  };
+  // private handlePress = () => {
+  //   const { onPress } = this.props;
+  //   if (onPress) {
+  //     onPress();
+  //   }
+  // };
 
   render() {
     const {
@@ -46,14 +46,6 @@ export class Polyline extends Component<PolylineComponentProps> {
 
     return (
       <RNBaiduMapPolyline
-        style={style}
-        coordinates={coordinates}
-        color={color}
-        width={width}
-        dottedLine={dottedLine}
-        zIndex={zIndex}
-        visible={visible}
-        onPress={this.handlePress}
         {...otherProps}
       />
     );

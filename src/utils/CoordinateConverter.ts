@@ -3,8 +3,6 @@ import {
   LatLng,
   CoordinateType,
   CoordinateConvertResult,
-  BaiduMapError,
-  BaiduMapErrorCode,
 } from '../types';
 
 const { BaiduMapModule } = NativeModules;

@@ -46,7 +46,7 @@ export interface VirtualizationState {
  */
 export class RenderOptimizer {
   private static instance: RenderOptimizer;
-  private logger = Logger;
+  private static logger = Logger;
   private memoryManager = MemoryManager.getInstance();
 
   private config: RenderConfig = {
@@ -91,7 +91,7 @@ export class RenderOptimizer {
    */
   configure(config: Partial<RenderConfig>): void {
     this.config = { ...this.config, ...config };
-    this.logger.info('渲染优化器配置已更新', this.config);
+    RenderOptimizer.logger.info('渲染优化器配置已更新', this.config);
   }
 
   /**
@@ -120,7 +120,7 @@ export class RenderOptimizer {
       };
     }
 
-    const timerId = this.logger.startPerformanceTimer('virtualization');
+    const timerId = Logger.startPerformanceTimer('virtualization');
 
     try {
       // 过滤可见区域内的元素
@@ -146,7 +146,7 @@ export class RenderOptimizer {
         }
       }
 
-      this.logger.endPerformanceTimer(timerId, true);
+      Logger.endPerformanceTimer(timerId, true);
 
       return {
         visibleItems,
@@ -157,8 +157,8 @@ export class RenderOptimizer {
       };
 
     } catch (error) {
-      this.logger.endPerformanceTimer(timerId, false, error as any);
-      this.logger.error('虚拟化渲染失败', error);
+      Logger.endPerformanceTimer(timerId, false, error as any);
+      Logger.error('虚拟化渲染失败', error);
 
       return {
         visibleItems: items.slice(0, this.config.virtualWindowSize),
@@ -190,7 +190,7 @@ export class RenderOptimizer {
       };
     }
 
-    const timerId = this.logger.startPerformanceTimer('lod_optimization');
+    const timerId = Logger.startPerformanceTimer('lod_optimization');
 
     try {
       // 找到适合当前缩放级别的LOD配置
@@ -219,7 +219,7 @@ export class RenderOptimizer {
         );
       }
 
-      this.logger.endPerformanceTimer(timerId, true);
+      Logger.endPerformanceTimer(timerId, true);
 
       return {
         optimizedItems,
@@ -228,8 +228,8 @@ export class RenderOptimizer {
       };
 
     } catch (error) {
-      this.logger.endPerformanceTimer(timerId, false, error as any);
-      this.logger.error('LOD优化失败', error);
+      Logger.endPerformanceTimer(timerId, false, error as any);
+      Logger.error('LOD优化失败', error);
 
       return {
         optimizedItems: items,
@@ -270,7 +270,7 @@ export class RenderOptimizer {
     }
 
     this.isProcessingQueue = true;
-    const timerId = this.logger.startPerformanceTimer('batch_render');
+    const timerId = Logger.startPerformanceTimer('batch_render');
 
     try {
       while (this.renderQueue.length > 0) {
@@ -281,7 +281,7 @@ export class RenderOptimizer {
           try {
             operation();
           } catch (error) {
-            this.logger.error('批量渲染操作失败', error);
+            Logger.error('批量渲染操作失败', error);
           }
         });
 
@@ -289,11 +289,11 @@ export class RenderOptimizer {
         await this.nextFrame();
       }
 
-      this.logger.endPerformanceTimer(timerId, true);
+      Logger.endPerformanceTimer(timerId, true);
 
     } catch (error) {
-      this.logger.endPerformanceTimer(timerId, false, error as any);
-      this.logger.error('批量渲染失败', error);
+      Logger.endPerformanceTimer(timerId, false, error as any);
+      Logger.error('批量渲染失败', error);
 
     } finally {
       this.isProcessingQueue = false;
@@ -473,7 +473,7 @@ export class RenderOptimizer {
     this.frameCount = 0;
     this.droppedFrames = 0;
     this.lastFrameTime = 0;
-    this.logger.info('渲染性能统计已重置');
+    Logger.info('渲染性能统计已重置');
   }
 
   /**
@@ -501,7 +501,7 @@ export class RenderOptimizer {
       processingTime: number;
     };
   } {
-    const timerId = this.logger.startPerformanceTimer('large_dataset_optimization');
+    const timerId = Logger.startPerformanceTimer('large_dataset_optimization');
     const startTime = performance.now ? performance.now() : Date.now();
 
     try {
@@ -527,7 +527,7 @@ export class RenderOptimizer {
         processingTime,
       };
 
-      this.logger.endPerformanceTimer(timerId, true);
+      Logger.endPerformanceTimer(timerId, true);
 
       return {
         optimizedItems: virtualizationState.visibleItems,
@@ -537,8 +537,8 @@ export class RenderOptimizer {
       };
 
     } catch (error) {
-      this.logger.endPerformanceTimer(timerId, false, error as any);
-      this.logger.error('大数据量优化失败', error);
+      Logger.endPerformanceTimer(timerId, false, error as any);
+      Logger.error('大数据量优化失败', error);
 
       const endTime = performance.now ? performance.now() : Date.now();
       
@@ -578,12 +578,12 @@ export class RenderOptimizer {
         // 严重性能问题
         this.config.virtualWindowSize = Math.max(20, this.config.virtualWindowSize * 0.5);
         this.config.batchSize = Math.max(10, this.config.batchSize * 0.5);
-        this.logger.warn('检测到严重性能问题，自动降低渲染质量');
+        Logger.warn('检测到严重性能问题，自动降低渲染质量');
       } else if (stats.currentFPS < this.config.targetFrameRate * 0.8) {
         // 轻微性能问题
         this.config.virtualWindowSize = Math.max(50, this.config.virtualWindowSize * 0.8);
         this.config.batchSize = Math.max(25, this.config.batchSize * 0.8);
-        this.logger.info('检测到性能问题，适度调整渲染参数');
+        Logger.info('检测到性能问题，适度调整渲染参数');
       }
     } else if (stats.currentFPS > this.config.targetFrameRate * 0.95) {
       // 性能良好时可以适当提高质量
@@ -652,7 +652,7 @@ export class RenderOptimizer {
     this.renderQueue = [];
     this.frameMetrics = [];
     this.isProcessingQueue = false;
-    this.logger.info('渲染优化器已销毁');
+    Logger.info('渲染优化器已销毁');
   }
 }
 
@@ -661,7 +661,7 @@ export class RenderOptimizer {
  */
 export class RenderPerformanceMonitor {
   private static instance: RenderPerformanceMonitor;
-  private logger = Logger.getInstance();
+  // private logger = Logger.getInstance(); // 已改为静态调用
   private renderOptimizer = RenderOptimizer.getInstance();
   
   private monitoringInterval: any = null;
@@ -693,7 +693,7 @@ export class RenderPerformanceMonitor {
       this.collectPerformanceData();
     }, interval);
 
-    this.logger.info('渲染性能监控已启动', { interval });
+    Logger.info('渲染性能监控已启动', { interval });
   }
 
   /**
@@ -703,7 +703,7 @@ export class RenderPerformanceMonitor {
     if (this.monitoringInterval) {
       clearInterval(this.monitoringInterval);
       this.monitoringInterval = null;
-      this.logger.info('渲染性能监控已停止');
+      Logger.info('渲染性能监控已停止');
     }
   }
 
@@ -732,7 +732,7 @@ export class RenderPerformanceMonitor {
       this.checkPerformanceAnomalies(fps, memoryUsage, renderTime);
 
     } catch (error) {
-      this.logger.error('收集性能数据失败', error);
+      Logger.error('收集性能数据失败', error);
     }
   }
 
@@ -781,7 +781,7 @@ export class RenderPerformanceMonitor {
     }
 
     if (warnings.length > 0) {
-      this.logger.warn('检测到性能异常', { warnings, fps, memoryUsage, renderTime });
+      Logger.warn('检测到性能异常', { warnings, fps, memoryUsage, renderTime });
       
       // 触发自适应调整
       this.renderOptimizer.adaptivePerformanceAdjustment();
@@ -811,7 +811,7 @@ export class RenderPerformanceMonitor {
       performanceScore: number;
     };
     trends: {
-      fpstrend: 'improving' | 'stable' | 'declining';
+      fpsTrend: 'improving' | 'stable' | 'declining';
       memoryTrend: 'improving' | 'stable' | 'declining';
     };
     recommendations: string[];
@@ -825,7 +825,7 @@ export class RenderPerformanceMonitor {
           performanceScore: 0,
         },
         trends: {
-          fpstrend: 'stable',
+          fpsTrend: 'stable',
           memoryTrend: 'stable',
         },
         recommendations: ['暂无性能数据'],
@@ -858,7 +858,7 @@ export class RenderPerformanceMonitor {
     const fpsThreshold = 2;
     const memoryThreshold = 5;
 
-    const fpstrend = fpsChange > fpsThreshold ? 'improving' : 
+    const fpsTrend = fpsChange > fpsThreshold ? 'improving' : 
                      fpsChange < -fpsThreshold ? 'declining' : 'stable';
     const memoryTrend = memoryChange < -memoryThreshold ? 'improving' : 
                         memoryChange > memoryThreshold ? 'declining' : 'stable';
@@ -908,7 +908,7 @@ export class RenderPerformanceMonitor {
    */
   reset(): void {
     this.performanceHistory = [];
-    this.logger.info('性能监控数据已重置');
+    Logger.info('性能监控数据已重置');
   }
 
   /**
@@ -917,7 +917,7 @@ export class RenderPerformanceMonitor {
   destroy(): void {
     this.stopMonitoring();
     this.performanceHistory = [];
-    this.logger.info('渲染性能监控器已销毁');
+    Logger.info('渲染性能监控器已销毁');
   }
 }
 

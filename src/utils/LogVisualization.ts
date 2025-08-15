@@ -37,7 +37,7 @@ export interface LogVisualizationConfig {
  */
 export class LogVisualization {
   private static instance: LogVisualization;
-  private logger = Logger;
+  // private logger = Logger; // 暂时未使用
 
   private config: LogVisualizationConfig = {
     maxEntries: 1000,
@@ -75,7 +75,7 @@ export class LogVisualization {
    */
   configure(config: Partial<LogVisualizationConfig>): void {
     this.config = { ...this.config, ...config };
-    this.logger.info('日志可视化配置已更新', this.config);
+    Logger.info('日志可视化配置已更新', this.config);
   }
 
   /**
@@ -117,10 +117,10 @@ export class LogVisualization {
    */
   refreshLogs(): void {
     try {
-      const rawLogs = this.logger.getLogs();
+      const rawLogs = Logger.getLogs();
       
       // 转换为LogEntry格式
-      const newEntries: LogEntry[] = rawLogs.map((log, index) => {
+      const newEntries: LogEntry[] = rawLogs.map((log: any, index: number) => {
         const parsed = this.parseLogEntry(log, index);
         return parsed;
       });
@@ -136,7 +136,7 @@ export class LogVisualization {
       this.applyFilter();
 
     } catch (error) {
-      this.logger.error('刷新日志失败', error);
+      Logger.error('刷新日志失败', error);
     }
   }
 
@@ -378,7 +378,7 @@ export class LogVisualization {
       try {
         listener(this.filteredEntries);
       } catch (error) {
-        this.logger.error('日志监听器执行失败', error);
+        Logger.error('日志监听器执行失败', error);
       }
     });
   }
@@ -443,9 +443,9 @@ export class LogVisualization {
   clearLogs(): void {
     this.logEntries = [];
     this.filteredEntries = [];
-    this.logger.clearLogs();
+    Logger.clearLogs();
     this.notifyListeners();
-    this.logger.info('日志已清空');
+    Logger.info('日志已清空');
   }
 
   /**
@@ -642,7 +642,7 @@ export class LogVisualization {
     this.eventListeners = [];
     this.logEntries = [];
     this.filteredEntries = [];
-    this.logger.info('日志可视化已销毁');
+    Logger.info('日志可视化已销毁');
   }
 }
 
@@ -651,7 +651,7 @@ export class LogVisualization {
  */
 export class LogAnalyzer {
   private static instance: LogAnalyzer;
-  private logger = Logger;
+  // private logger = Logger; // 暂时未使用
   private logVisualization = LogVisualization.getInstance();
 
   private constructor() {}
@@ -857,7 +857,6 @@ export class LogAnalyzer {
     trends: any;
     recommendations: string[];
   } {
-    const entries = this.logVisualization.getAllEntries();
     const stats = this.logVisualization.getLogStats();
     const patterns = this.analyzePatterns();
     const trends = this.logVisualization.getLogTrends();

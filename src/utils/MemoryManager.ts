@@ -1,5 +1,5 @@
 import { Logger } from './Logger';
-import { PerformanceOptimizer } from './PerformanceOptimizer';
+// import { PerformanceOptimizer } from './PerformanceOptimizer'; // 暂时未使用
 
 export interface MemoryUsage {
   usedJSHeapSize: number;
@@ -28,8 +28,8 @@ export interface MemoryOptimizationConfig {
  */
 export class MemoryManager {
   private static instance: MemoryManager;
-  private logger = Logger.getInstance();
-  private performanceOptimizer = PerformanceOptimizer.getInstance();
+  // private logger = Logger; // 已改为静态调用
+  // private performanceOptimizer = PerformanceOptimizer.getInstance(); // 暂时禁用
   
   private config: MemoryOptimizationConfig = {
     enableAutoCleanup: true,
@@ -78,7 +78,7 @@ export class MemoryManager {
       this.stopAutoCleanup();
     }
 
-    this.logger.info('内存管理器配置已更新', this.config);
+    Logger.info('内存管理器配置已更新', this.config);
   }
 
   /**
@@ -97,7 +97,7 @@ export class MemoryManager {
       }
       return null;
     } catch (error) {
-      this.logger.error('获取内存使用情况失败', error);
+      Logger.error('获取内存使用情况失败', error);
       return null;
     }
   }
@@ -157,7 +157,7 @@ export class MemoryManager {
     freedMemory: number;
     actions: string[];
   }> {
-    const timerId = this.logger.startPerformanceTimer('memory_cleanup');
+    const timerId = Logger.startPerformanceTimer('memory_cleanup');
     const beforeUsage = this.getCurrentMemoryUsage();
     const actions: string[] = [];
 
@@ -176,7 +176,7 @@ export class MemoryManager {
       }
 
       // 清理性能优化器缓存
-      this.performanceOptimizer.clearCache();
+      // this.performanceOptimizer.clearCache(); // 暂时禁用
       actions.push('清理了性能优化器缓存');
 
       // 触发垃圾回收（如果可用）
@@ -190,8 +190,8 @@ export class MemoryManager {
         ? beforeUsage.usedJSHeapSize - afterUsage.usedJSHeapSize
         : 0;
 
-      this.logger.endPerformanceTimer(timerId, true);
-      this.logger.info('内存清理完成', {
+      Logger.endPerformanceTimer(timerId, true);
+      Logger.info('内存清理完成', {
         freedMemory: freedMemory / (1024 * 1024) + 'MB',
         actions,
       });
@@ -203,8 +203,8 @@ export class MemoryManager {
       };
 
     } catch (error) {
-      this.logger.endPerformanceTimer(timerId, false, error as any);
-      this.logger.error('内存清理失败', error);
+      Logger.endPerformanceTimer(timerId, false, error as any);
+      Logger.error('内存清理失败', error);
       
       return {
         success: false,
@@ -234,10 +234,10 @@ export class MemoryManager {
         accessCount: 0,
       });
 
-      this.logger.debug('添加缓存项', { key, size: size / 1024 + 'KB' });
+      Logger.debug('添加缓存项', { key, size: size / 1024 + 'KB' });
 
     } catch (error) {
-      this.logger.error('添加缓存项失败', error);
+      Logger.error('添加缓存项失败', error);
     }
   }
 
@@ -299,7 +299,7 @@ export class MemoryManager {
 
     if (lruKey) {
       this.cacheRegistry.delete(lruKey);
-      this.logger.debug('驱逐LRU缓存项', { key: lruKey });
+      Logger.debug('驱逐LRU缓存项', { key: lruKey });
     }
   }
 
@@ -432,7 +432,7 @@ export class MemoryManager {
     this.stopAutoCleanup();
     this.cacheRegistry.clear();
     this.memoryHistory = [];
-    this.logger.info('内存管理器已销毁');
+    Logger.info('内存管理器已销毁');
   }
 }
 
@@ -441,7 +441,7 @@ export class MemoryManager {
  */
 export class MemoryLeakDetector {
   private static instance: MemoryLeakDetector;
-  private logger = Logger.getInstance();
+  // private logger = Logger.getInstance(); // 已改为静态调用
   private objectRegistry = new WeakMap<object, string>();
   private creationCounts = new Map<string, number>();
   private destructionCounts = new Map<string, number>();
@@ -464,7 +464,7 @@ export class MemoryLeakDetector {
       const count = this.creationCounts.get(type) || 0;
       this.creationCounts.set(type, count + 1);
     } catch (error) {
-      this.logger.error('注册对象创建失败', error);
+      Logger.error('注册对象创建失败', error);
     }
   }
 
@@ -480,7 +480,7 @@ export class MemoryLeakDetector {
         this.objectRegistry.delete(obj);
       }
     } catch (error) {
-      this.logger.error('注册对象销毁失败', error);
+      Logger.error('注册对象销毁失败', error);
     }
   }
 
@@ -557,7 +557,7 @@ export class MemoryLeakDetector {
   reset(): void {
     this.creationCounts.clear();
     this.destructionCounts.clear();
-    this.logger.info('内存泄漏检测器已重置');
+    Logger.info('内存泄漏检测器已重置');
   }
 }
 

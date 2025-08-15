@@ -35,9 +35,20 @@ export class LocationModule {
       }
 
       // 检查是否可以请求权限
-      const canRequest = await PermissionsAndroid.shouldShowRequestPermissionRationale(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
-      );
+      // 注意：shouldShowRequestPermissionRationale 在某些版本中可能不可用
+      let canRequest = true;
+      try {
+        // @ts-ignore - 方法可能不存在于类型定义中
+        if (PermissionsAndroid.shouldShowRequestPermissionRationale) {
+          // @ts-ignore
+          canRequest = await PermissionsAndroid.shouldShowRequestPermissionRationale(
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+          );
+        }
+      } catch (error) {
+        // 如果方法不存在，假设可以请求权限
+        canRequest = true;
+      }
 
       return {
         status: PermissionStatus.DENIED,

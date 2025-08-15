@@ -329,8 +329,8 @@ export class DebugPanel {
    */
   private getSystemInfo(): any {
     const info: any = {
-      userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'Unknown',
-      platform: typeof navigator !== 'undefined' ? navigator.platform : 'Unknown',
+      userAgent: 'React Native',
+      platform: 'React Native',
       timestamp: new Date().toISOString(),
     };
 
@@ -487,7 +487,7 @@ export class DebugPanel {
     try {
       // 模拟网络请求测试
       const testUrl = 'https://httpbin.org/json';
-      const response = await this.networkOptimizer.optimizedFetch(testUrl);
+      await this.networkOptimizer.optimizedFetch(testUrl);
       
       const endTime = Date.now();
       const responseTime = endTime - startTime;
@@ -596,37 +596,14 @@ export class ErrorTracker {
    * 初始化错误追踪
    */
   private initializeErrorTracking(): void {
-    // 捕获全局错误
-    if (typeof window !== 'undefined') {
-      window.addEventListener('error', (event) => {
-        this.trackError({
-          message: event.message,
-          stack: event.error?.stack,
-          context: {
-            filename: event.filename,
-            lineno: event.lineno,
-            colno: event.colno,
-          },
-          severity: 'high',
-        });
-      });
-
-      window.addEventListener('unhandledrejection', (event) => {
-        this.trackError({
-          message: `Unhandled Promise Rejection: ${event.reason}`,
-          stack: event.reason?.stack,
-          context: { type: 'unhandledrejection' },
-          severity: 'critical',
-        });
-      });
-    }
+    // React Native 环境中不使用 window API
 
     // React Native 错误处理
     try {
       const { ErrorUtils } = require('react-native');
       if (ErrorUtils) {
         const originalHandler = ErrorUtils.getGlobalHandler();
-        ErrorUtils.setGlobalHandler((error, isFatal) => {
+        ErrorUtils.setGlobalHandler((error: any, isFatal: boolean) => {
           this.trackError({
             message: error.message,
             stack: error.stack,
@@ -719,7 +696,7 @@ export class ErrorTracker {
         filteredErrors = filteredErrors.filter(error => error.resolved === filter.resolved);
       }
       if (filter.since) {
-        filteredErrors = filteredErrors.filter(error => error.timestamp >= filter.since);
+        filteredErrors = filteredErrors.filter(error => error.timestamp >= (filter.since || 0));
       }
     }
 

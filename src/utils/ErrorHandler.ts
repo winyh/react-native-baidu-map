@@ -80,7 +80,7 @@ export class ErrorHandler {
     if (nativeError.code && Object.values(BaiduMapErrorCode).includes(nativeError.code)) {
       return {
         code: nativeError.code,
-        message: nativeError.message || this.ERROR_MESSAGES[nativeError.code],
+        message: nativeError.message || this.ERROR_MESSAGES[nativeError.code as BaiduMapErrorCode],
         nativeError: nativeError.nativeError,
       };
     }

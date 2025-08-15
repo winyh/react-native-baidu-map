@@ -4,8 +4,6 @@ import {
   MarkerProps,
   MarkerClickEvent,
   MarkerDragEvent,
-  LatLng,
-  Point,
 } from '../types';
 
 const COMPONENT_NAME = 'BaiduMapMarker';
@@ -31,33 +29,33 @@ export class Marker extends Component<MarkerComponentProps> {
     anchor: { x: 0.5, y: 1.0 }, // 默认锚点在底部中心
   };
 
-  private handlePress = (event: { nativeEvent: MarkerClickEvent }) => {
-    const { onPress } = this.props;
-    if (onPress) {
-      onPress(event.nativeEvent);
-    }
-  };
+  // private handlePress = (event: { nativeEvent: MarkerClickEvent }) => {
+  //   const { onPress } = this.props;
+  //   if (onPress) {
+  //     onPress(event.nativeEvent);
+  //   }
+  // };
 
-  private handleDragStart = (event: { nativeEvent: MarkerDragEvent }) => {
-    const { onDragStart } = this.props;
-    if (onDragStart) {
-      onDragStart(event.nativeEvent);
-    }
-  };
+  // private handleDragStart = (event: { nativeEvent: MarkerDragEvent }) => {
+  //   const { onDragStart } = this.props;
+  //   if (onDragStart) {
+  //     onDragStart(event.nativeEvent);
+  //   }
+  // };
 
-  private handleDrag = (event: { nativeEvent: MarkerDragEvent }) => {
-    const { onDrag } = this.props;
-    if (onDrag) {
-      onDrag(event.nativeEvent);
-    }
-  };
+  // private handleDrag = (event: { nativeEvent: MarkerDragEvent }) => {
+  //   const { onDrag } = this.props;
+  //   if (onDrag) {
+  //     onDrag(event.nativeEvent);
+  //   }
+  // };
 
-  private handleDragEnd = (event: { nativeEvent: MarkerDragEvent }) => {
-    const { onDragEnd } = this.props;
-    if (onDragEnd) {
-      onDragEnd(event.nativeEvent);
-    }
-  };
+  // private handleDragEnd = (event: { nativeEvent: MarkerDragEvent }) => {
+  //   const { onDragEnd } = this.props;
+  //   if (onDragEnd) {
+  //     onDragEnd(event.nativeEvent);
+  //   }
+  // };
 
   render() {
     const {
@@ -89,22 +87,6 @@ export class Marker extends Component<MarkerComponentProps> {
 
     return (
       <RNBaiduMapMarker
-        style={style}
-        coordinate={coordinate}
-        title={title}
-        description={description}
-        icon={icon}
-        draggable={draggable}
-        visible={visible}
-        zIndex={zIndex}
-        alpha={alpha}
-        rotation={rotation}
-        flat={flat}
-        anchor={anchor}
-        onPress={this.handlePress}
-        onDragStart={this.handleDragStart}
-        onDrag={this.handleDrag}
-        onDragEnd={this.handleDragEnd}
         {...otherProps}
       >
         {children}

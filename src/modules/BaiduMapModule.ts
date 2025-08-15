@@ -1,7 +1,6 @@
 import { NativeModules } from 'react-native';
 import {
   BaiduMapConfig,
-  BaiduMapError,
   BaiduMapErrorCode,
   MapMethodResult,
   CoordinateType,
@@ -317,6 +316,56 @@ export class BaiduMapModule {
       throw new Error('原生百度地图模块未找到');
     }
     return await NativeBaiduMapModule.removeHeatMap();
+  }
+
+  /**
+   * 地图动画移动到指定位置
+   */
+  static async animateToLocation(options: {
+    latitude: number;
+    longitude: number;
+    duration: number;
+  }): Promise<void> {
+    if (!NativeBaiduMapModule) {
+      throw new Error('原生百度地图模块未找到');
+    }
+    return await NativeBaiduMapModule.animateToLocation(options);
+  }
+
+  /**
+   * 地图动画缩放到指定级别
+   */
+  static async animateToZoom(options: {
+    zoomLevel: number;
+    duration: number;
+  }): Promise<void> {
+    if (!NativeBaiduMapModule) {
+      throw new Error('原生百度地图模块未找到');
+    }
+    return await NativeBaiduMapModule.animateToZoom(options);
+  }
+
+  /**
+   * 下载离线地图
+   */
+  static async downloadOfflineMap(options: {
+    cityId: string;
+    cityName: string;
+  }): Promise<{success: boolean, message: string}> {
+    if (!NativeBaiduMapModule) {
+      throw new Error('原生百度地图模块未找到');
+    }
+    return await NativeBaiduMapModule.downloadOfflineMap(options);
+  }
+
+  /**
+   * 获取离线地图列表
+   */
+  static async getOfflineMapList(): Promise<Array<{cityId: string, cityName: string, status: string}>> {
+    if (!NativeBaiduMapModule) {
+      throw new Error('原生百度地图模块未找到');
+    }
+    return await NativeBaiduMapModule.getOfflineMapList();
   }
 }
 

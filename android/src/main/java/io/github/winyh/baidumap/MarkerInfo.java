@@ -58,8 +58,15 @@ public class MarkerInfo {
             Object icon = options.getDynamic("icon").asString();
             if (icon instanceof String) {
                 this.iconUri = (String) icon;
+            } else if (options.getMap("icon") != null) {
+                // 处理 ImageSource 对象或其他 Map 类型的图标
+                ReadableMap iconMap = options.getMap("icon");
+                if (iconMap.hasKey("uri")) {
+                    this.iconUri = iconMap.getString("uri");
+                } else if (iconMap.hasKey("url")) {
+                    this.iconUri = iconMap.getString("url");
+                }
             }
-            // TODO: 处理其他图标类型（如 ImageSource 对象）
         }
 
         // 拖拽

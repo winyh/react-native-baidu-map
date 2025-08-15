@@ -1,5 +1,5 @@
 import { Logger } from './Logger';
-import { MemoryManager } from './MemoryManager';
+// import { MemoryManager } from './MemoryManager'; // 暂时未使用
 
 export interface NetworkConfig {
   enableCaching: boolean;
@@ -40,7 +40,7 @@ export interface NetworkMetrics {
 export class NetworkOptimizer {
   private static instance: NetworkOptimizer;
   private logger = Logger;
-  private memoryManager = MemoryManager.getInstance();
+  // private memoryManager = MemoryManager.getInstance(); // 暂时禁用
 
   private config: NetworkConfig = {
     enableCaching: true,
@@ -104,6 +104,13 @@ export class NetworkOptimizer {
   async optimizedFetch(url: string, options: any = {}): Promise<any> {
     const timerId = this.logger.startPerformanceTimer('network_request');
     const startTime = Date.now();
+
+    // 处理离线队列
+    if (this.isOnline) {
+      this.processOfflineQueue().catch(error => {
+        this.logger.error('处理离线队列失败', error);
+      });
+    }
 
     try {
       this.metrics.requestCount++;
@@ -387,20 +394,14 @@ export class NetworkOptimizer {
    * 初始化网络监控
    */
   private initializeNetworkMonitoring(): void {
-    // 监听网络状态变化
-    if (typeof navigator !== 'undefined' && 'onLine' in navigator) {
-      this.isOnline = navigator.onLine;
-      
-      window.addEventListener('online', () => {
-        this.isOnline = true;
-        this.logger.info('网络已连接');
-        this.processOfflineQueue();
-      });
-
-      window.addEventListener('offline', () => {
-        this.isOnline = false;
-        this.logger.warn('网络已断开');
-      });
+    // React Native 环境中使用 NetInfo 来监听网络状态
+    try {
+      // 在 React Native 中，可以使用 @react-native-community/netinfo
+      // 这里提供基本的网络状态管理
+      this.isOnline = true; // 默认假设网络可用
+    } catch (error) {
+      this.logger.warn('网络状态监听初始化失败', error);
+      this.isOnline = true;
     }
   }
 

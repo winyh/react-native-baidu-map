@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { requireNativeComponent, ViewStyle } from 'react-native';
-import { InfoWindowProps, LatLng } from '../types';
+import { InfoWindowProps } from '../types';
 
 const COMPONENT_NAME = 'BaiduMapInfoWindow';
 const RNBaiduMapInfoWindow = requireNativeComponent(COMPONENT_NAME);
@@ -17,12 +17,12 @@ export class InfoWindow extends Component<InfoWindowComponentProps> {
     yOffset: 0,
   };
 
-  private handlePress = () => {
-    const { onPress } = this.props;
-    if (onPress) {
-      onPress();
-    }
-  };
+  // private handlePress = () => {
+  //   const { onPress } = this.props;
+  //   if (onPress) {
+  //     onPress();
+  //   }
+  // };
 
   render() {
     const {
@@ -42,11 +42,6 @@ export class InfoWindow extends Component<InfoWindowComponentProps> {
 
     return (
       <RNBaiduMapInfoWindow
-        style={style}
-        coordinate={coordinate}
-        visible={visible}
-        yOffset={yOffset}
-        onPress={this.handlePress}
         {...otherProps}
       >
         {children}

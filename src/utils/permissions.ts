@@ -2,8 +2,6 @@ import { Platform, PermissionsAndroid, Linking, Alert } from 'react-native';
 import {
   PermissionStatus,
   PermissionResult,
-  BaiduMapError,
-  BaiduMapErrorCode,
 } from '../types';
 
 /**
@@ -48,9 +46,18 @@ export class PermissionManager {
       }
 
       // 检查是否可以请求权限
-      const shouldShowRationale = await PermissionsAndroid.shouldShowRequestPermissionRationale(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
-      );
+      let shouldShowRationale = false;
+      try {
+        // @ts-ignore - 方法可能不存在于类型定义中
+        if (PermissionsAndroid.shouldShowRequestPermissionRationale) {
+          // @ts-ignore
+          shouldShowRationale = await PermissionsAndroid.shouldShowRequestPermissionRationale(
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+          );
+        }
+      } catch (error) {
+        shouldShowRationale = false;
+      }
 
       return {
         status: PermissionStatus.DENIED,
@@ -73,9 +80,18 @@ export class PermissionManager {
     try {
       // 如果需要显示权限说明
       if (showRationale) {
-        const shouldShow = await PermissionsAndroid.shouldShowRequestPermissionRationale(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
-        );
+        let shouldShow = false;
+        try {
+          // @ts-ignore
+          if (PermissionsAndroid.shouldShowRequestPermissionRationale) {
+            // @ts-ignore
+            shouldShow = await PermissionsAndroid.shouldShowRequestPermissionRationale(
+              PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+            );
+          }
+        } catch (error) {
+          shouldShow = false;
+        }
 
         if (shouldShow) {
           const userChoice = await this.showPermissionRationale();
@@ -124,9 +140,18 @@ export class PermissionManager {
         return { status: PermissionStatus.GRANTED, canRequestAgain: false };
       }
 
-      const shouldShow = await PermissionsAndroid.shouldShowRequestPermissionRationale(
-        this.BACKGROUND_LOCATION_PERMISSION
-      );
+      let shouldShow = false;
+      try {
+        // @ts-ignore
+        if (PermissionsAndroid.shouldShowRequestPermissionRationale) {
+          // @ts-ignore
+          shouldShow = await PermissionsAndroid.shouldShowRequestPermissionRationale(
+            this.BACKGROUND_LOCATION_PERMISSION
+          );
+        }
+      } catch (error) {
+        shouldShow = false;
+      }
 
       return {
         status: PermissionStatus.DENIED,
