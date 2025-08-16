@@ -126,16 +126,16 @@ export class Logger {
     if (this.config.enableConsole) {
       switch (level) {
         case LogLevel.DEBUG:
-          console.debug(fullMessage, ...args);
+          console.debug(fullMessage);
           break;
         case LogLevel.INFO:
-          console.info(fullMessage, ...args);
+          console.info(fullMessage);
           break;
         case LogLevel.WARN:
-          console.warn(fullMessage, ...args);
+          console.warn(fullMessage);
           break;
         case LogLevel.ERROR:
-          console.error(fullMessage, ...args);
+          console.error(fullMessage);
           if (this.config.enableStackTrace && args[0] instanceof Error) {
             console.error(args[0].stack);
           }

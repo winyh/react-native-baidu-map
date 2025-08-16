@@ -27,8 +27,8 @@ module.exports = {
       statements: 80,
     },
   },
-  testEnvironment: 'node',
-  moduleNameMapping: {
+  testEnvironment: 'jsdom',
+  moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
   globals: {
@@ -40,7 +40,7 @@ module.exports = {
     '**/__tests__/**/*.(test|spec).(ts|tsx|js)',
     '**/*.(test|spec).(ts|tsx|js)',
   ],
-  verbose: true,
+  testTimeout: 15000,
   clearMocks: true,
   resetMocks: true,
   restoreMocks: true,

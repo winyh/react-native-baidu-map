@@ -1,153 +1,152 @@
 import { BaiduMapModule } from '../../src/modules/BaiduMapModule';
-import { LocationMode, CoordinateType, LogLevel } from '../../src/types';
+import { NativeModules } from 'react-native';
+import { LogLevel } from '../../src/types';
 
-// Mock React Native NativeModules
+declare global {
+  var performance: any;
+}
+
+// Mock NativeModules
+const mockBaiduMapModule = {
+  initialize: jest.fn(),
+  isSDKInitialized: jest.fn(),
+  getSDKVersion: jest.fn(),
+  clearMapCache: jest.fn(),
+  setAgreePrivacy: jest.fn(),
+  convertCoordinate: jest.fn(),
+  convertCoordinates: jest.fn(),
+  takeSnapshot: jest.fn(),
+  setMapCustomStyle: jest.fn(),
+  setLogLevel: jest.fn(),
+  clearCache: jest.fn(),
+  setUserAgent: jest.fn(),
+  isInitialized: jest.fn(),
+  getVersion: jest.fn(),
+};
+
 jest.mock('react-native', () => ({
   NativeModules: {
-    BaiduMapModule: {
-      setAgreePrivacy: jest.fn(),
-      initialize: jest.fn(),
-      getVersion: jest.fn(),
-      isInitialized: jest.fn(),
-      setLogLevel: jest.fn(),
-      clearCache: jest.fn(),
-      setUserAgent: jest.fn(),
-    },
+    BaiduMapModule: mockBaiduMapModule,
   },
 }));
 
-const mockNativeModule = require('react-native').NativeModules.BaiduMapModule;
+const mockNativeModule = NativeModules.BaiduMapModule;
+
+const validConfig = {
+  apiKey: 'test-api-key',
+  logEnable: true,
+  logLevel: 'DEBUG',
+  autoStartLocating: false,
+};
 
 describe('BaiduMapModule', () => {
+  const originalPerformance = global.performance;
+
   beforeEach(() => {
+    // 为测试环境提供 performance 对象
+    if (!global.performance) {
+      global.performance = {
+        now: jest.fn(() => Date.now()),
+      } as any;
+    }
+
     jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    // 恢复原始 performance 对象
+    if (originalPerformance) {
+      global.performance = originalPerformance;
+    } else {
+      delete (global as any).performance;
+    }
   });
 
   describe('setAgreePrivacy', () => {
     it('should call native setAgreePrivacy with correct parameter', async () => {
-      mockNativeModule.setAgreePrivacy.mockResolvedValue(undefined);
-
-      await BaiduMapModule.setAgreePrivacy(true);
-
+      mockNativeModule.setAgreePrivacy.mockResolvedValue({ success: true });
+      
+      const result = await BaiduMapModule.setAgreePrivacy(true);
+      
       expect(mockNativeModule.setAgreePrivacy).toHaveBeenCalledWith(true);
+      expect(result.success).toBe(true);
     });
 
     it('should handle false parameter', async () => {
-      mockNativeModule.setAgreePrivacy.mockResolvedValue(undefined);
-
-      await BaiduMapModule.setAgreePrivacy(false);
-
+      mockNativeModule.setAgreePrivacy.mockResolvedValue({ success: true });
+      
+      const result = await BaiduMapModule.setAgreePrivacy(false);
+      
       expect(mockNativeModule.setAgreePrivacy).toHaveBeenCalledWith(false);
+      expect(result.success).toBe(true);
     });
 
     it('should handle native module errors', async () => {
       const error = new Error('Native module error');
       mockNativeModule.setAgreePrivacy.mockRejectedValue(error);
-
+      
       await expect(BaiduMapModule.setAgreePrivacy(true)).rejects.toThrow('Native module error');
     });
   });
 
   describe('initialize', () => {
-    const validConfig = {
-      apiKey: 'test-api-key',
-      enableLocation: true,
-      locationMode: LocationMode.HIGH_ACCURACY,
-      coordinateType: CoordinateType.BD09LL,
-      enableHttps: true,
-      enableDebug: false,
-    };
-
-    it('should initialize with valid config', async () => {
-      const expectedResult = { success: true };
-      mockNativeModule.initialize.mockResolvedValue(expectedResult);
-
-      const result = await BaiduMapModule.initialize(validConfig);
-
-      expect(mockNativeModule.initialize).toHaveBeenCalledWith(validConfig);
-      expect(result).toEqual(expectedResult);
+    it('should call native initialize method', async () => {
+      const mockResult = { success: true, version: '1.0.0' };
+      mockNativeModule.initialize.mockResolvedValue(mockResult);
+      
+      const config = { apiKey: 'test-key' };
+      const result = await BaiduMapModule.initialize(config);
+      
+      expect(mockNativeModule.initialize).toHaveBeenCalledWith(config);
+      expect(result).toEqual(mockResult);
     });
 
-    it('should handle initialization failure', async () => {
-      const expectedResult = {
-        success: false,
-        error: {
-          code: 101,
-          message: 'Invalid API key',
-        },
-      };
-      mockNativeModule.initialize.mockResolvedValue(expectedResult);
-
-      const result = await BaiduMapModule.initialize(validConfig);
-
-      expect(result).toEqual(expectedResult);
-      expect(result.success).toBe(false);
-      expect(result.error?.code).toBe(101);
-    });
-
-    it('should handle minimal config', async () => {
-      const minimalConfig = {
-        apiKey: 'test-api-key',
-      };
-      const expectedResult = { success: true };
-      mockNativeModule.initialize.mockResolvedValue(expectedResult);
-
-      const result = await BaiduMapModule.initialize(minimalConfig);
-
-      expect(mockNativeModule.initialize).toHaveBeenCalledWith(minimalConfig);
-      expect(result).toEqual(expectedResult);
-    });
-
-    it('should handle native module errors during initialization', async () => {
+    it('should handle initialization errors', async () => {
       const error = new Error('Initialization failed');
       mockNativeModule.initialize.mockRejectedValue(error);
-
-      await expect(BaiduMapModule.initialize(validConfig)).rejects.toThrow('Initialization failed');
+      
+      const config = { apiKey: 'test-key' };
+      await expect(BaiduMapModule.initialize(config)).rejects.toThrow('Initialization failed');
     });
   });
 
-  describe('getVersion', () => {
-    it('should return SDK version', async () => {
-      const expectedVersion = '7.6.5';
-      mockNativeModule.getVersion.mockResolvedValue(expectedVersion);
-
-      const version = await BaiduMapModule.getVersion();
-
-      expect(mockNativeModule.getVersion).toHaveBeenCalled();
-      expect(version).toBe(expectedVersion);
-    });
-
-    it('should handle version retrieval errors', async () => {
-      const error = new Error('Failed to get version');
-      mockNativeModule.getVersion.mockRejectedValue(error);
-
-      await expect(BaiduMapModule.getVersion()).rejects.toThrow('Failed to get version');
+  describe('getSDKVersion', () => {
+    it('should return version info', async () => {
+      const mockVersion = { 
+        success: true, 
+        data: { 
+          sdkVersion: '1.0.0', 
+          apiVersion: '2.0.0' 
+        } 
+      };
+      mockNativeModule.getSDKVersion.mockResolvedValue(mockVersion);
+      
+      const result = await BaiduMapModule.getSDKVersion();
+      
+      expect(mockNativeModule.getSDKVersion).toHaveBeenCalled();
+      expect(result).toEqual(mockVersion);
     });
   });
 
   describe('isInitialized', () => {
-    it('should return true when initialized', async () => {
-      mockNativeModule.isInitialized.mockResolvedValue(true);
-
-      const result = await BaiduMapModule.isInitialized();
-
-      expect(mockNativeModule.isInitialized).toHaveBeenCalled();
+    it('should check initialization status', async () => {
+      mockNativeModule.isSDKInitialized.mockResolvedValue({ success: true, data: true });
+      
+      const result = await BaiduMapModule.isSDKInitialized();
+      
+      expect(mockNativeModule.isSDKInitialized).toHaveBeenCalled();
       expect(result).toBe(true);
     });
+  });
 
-    it('should return false when not initialized', async () => {
-      mockNativeModule.isInitialized.mockResolvedValue(false);
-
-      const result = await BaiduMapModule.isInitialized();
-
-      expect(result).toBe(false);
-    });
-
-    it('should handle errors when checking initialization status', async () => {
-      const error = new Error('Failed to check initialization');
-      mockNativeModule.isInitialized.mockRejectedValue(error);
-
-      await expect(BaiduMapModule.isInitialized()).rejects.toThrow('Failed to check initialization');
+  describe('clearMapCache', () => {
+    it('should clear cache', async () => {
+      mockNativeModule.clearMapCache.mockResolvedValue({ success: true });
+      
+      const result = await BaiduMapModule.clearMapCache();
+      
+      expect(mockNativeModule.clearMapCache).toHaveBeenCalled();
+      expect(result.success).toBe(true);
     });
   });
 

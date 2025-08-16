@@ -1,3 +1,4 @@
+import React from 'react';
 import 'react-native-gesture-handler/jestSetup';
 
 // Mock React Native modules
@@ -36,6 +37,7 @@ jest.mock('react-native', () => {
       },
     },
     requireNativeComponent: jest.fn(() => {
+      const React = require('react');
       const MockComponent = (props: any) => {
         return React.createElement('View', {
           ...props,
