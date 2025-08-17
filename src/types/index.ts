@@ -151,19 +151,80 @@ export interface CircleProps {
 }
 
 // 错误处理类型
-export enum BaiduMapErrorCode {
-  SDK_NOT_INITIALIZED = 'SDK_NOT_INITIALIZED',
-  INVALID_API_KEY = 'INVALID_API_KEY',
-  LOCATION_PERMISSION_DENIED = 'LOCATION_PERMISSION_DENIED',
-  LOCATION_SERVICE_DISABLED = 'LOCATION_SERVICE_DISABLED',
-  NETWORK_ERROR = 'NETWORK_ERROR',
-  UNKNOWN_ERROR = 'UNKNOWN_ERROR',
-  INVALID_COORDINATE = 'INVALID_COORDINATE',
-  INVALID_PARAMETER = 'INVALID_PARAMETER',
+/**
+ * @enum {string}
+ * @description 统一错误码枚举
+ */
+export enum ErrorCode {
+  // --- 通用错误 (1000-1999) ---
+  /** 未知错误 */
+  GENERAL_UNKNOWN = '1000',
+  /** 网络连接失败 */
+  GENERAL_NETWORK_ERROR = '1001',
+  /** 参数错误 */
+  GENERAL_INVALID_PARAMETER = '1002',
+  /** 原生层内部错误 */
+  GENERAL_INTERNAL_ERROR = '1003',
+
+  // --- SDK 初始化 (2000-2999) ---
+  /** SDK 未初始化 */
+  INIT_SDK_NOT_INITIALIZED = '2000',
+  /** API Key 无效或验证失败 */
+  INIT_INVALID_API_KEY = '2001',
+  /** 车牌号错误 (特定功能使用) */
+  INIT_LICENSE_PLATE_ERROR = '2002',
+
+  // --- 定位服务 (3000-3999) ---
+  /** 定位权限被拒绝 */
+  LOCATION_PERMISSION_DENIED = '3000',
+  /** 系统定位服务未开启 */
+  LOCATION_SERVICE_DISABLED = '3001',
+  /** 定位硬件不可用 (如 GPS 关闭) */
+  LOCATION_HARDWARE_DISABLED = '3002',
+  /** 定位超时 */
+  LOCATION_TIMEOUT = '3003',
+  /** 定位时网络错误 */
+  LOCATION_NETWORK_ERROR = '3004',
+  /** 定位失败 */
+  LOCATION_FAILURE = '3005',
+
+  // --- 地理编码与逆地理编码 (4000-4999) ---
+  /** 不支持地理编码 */
+  GEOCODING_NOT_SUPPORTED = '4000',
+  /** 地址无效 */
+  GEOCODING_INVALID_ADDRESS = '4001',
+  /** 坐标无效 */
+  GEOCODING_INVALID_COORDINATE = '4002',
+  /** 未找到结果 */
+  GEOCODING_NO_RESULT = '4003',
+  /** 服务不可用 */
+  GEOCODING_SERVICE_UNAVAILABLE = '4004',
+
+  // --- 路线规划 (5000-5999) ---
+  /** 不支持路线规划 */
+  ROUTE_PLANNING_NOT_SUPPORTED = '5000',
+  /** 起点无效 */
+  ROUTE_PLANNING_INVALID_START_NODE = '5001',
+  /** 终点无效 */
+  ROUTE_PLANNING_INVALID_END_NODE = '5002',
+  /** 未找到路线 */
+  ROUTE_PLANNING_NO_RESULT = '5003',
+  /** 服务不可用 */
+  ROUTE_PLANNING_SERVICE_UNAVAILABLE = '5004',
+  /** 没有权限 */
+  ROUTE_PLANNING_PERMISSION_DENIED = '5005',
+
+  // --- 地图渲染与加载 (6000-6999) ---
+  /** 地图渲染错误 */
+  MAP_RENDER_ERROR = '6000',
+  /** 地图加载失败 */
+  MAP_LOAD_ERROR = '6001',
+  /** 自定义地图样式无效 */
+  MAP_INVALID_CUSTOM_STYLE = '6002',
 }
 
 export interface BaiduMapError {
-  code: BaiduMapErrorCode;
+  code: ErrorCode;
   message: string;
   nativeError?: any;
 }

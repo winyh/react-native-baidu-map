@@ -71,13 +71,7 @@ public class GeocodingModule extends ReactContextBaseJavaModule implements
     @ReactMethod
     public void geocoding(String address, String city, Promise promise) {
         if (address == null || address.trim().isEmpty()) {
-            WritableMap result = Arguments.createMap();
-            result.putBoolean("success", false);
-            WritableMap error = Arguments.createMap();
-            error.putString("code", "INVALID_PARAMETER");
-            error.putString("message", "地址不能为空");
-            result.putMap("error", error);
-            promise.resolve(result);
+            promise.reject("1002", "地址不能为空");
             return;
         }
 
@@ -97,36 +91,17 @@ public class GeocodingModule extends ReactContextBaseJavaModule implements
             if (!success) {
                 pendingPromises.remove(requestId);
                 requestTypes.remove(requestId);
-                
-                WritableMap result = Arguments.createMap();
-                result.putBoolean("success", false);
-                WritableMap error = Arguments.createMap();
-                error.putString("code", "GEOCODING_ERROR");
-                error.putString("message", "地理编码请求失败");
-                result.putMap("error", error);
-                promise.resolve(result);
+                promise.reject("4004", "地理编码请求失败");
             }
         } catch (Exception e) {
-            WritableMap result = Arguments.createMap();
-            result.putBoolean("success", false);
-            WritableMap error = Arguments.createMap();
-            error.putString("code", "GEOCODING_ERROR");
-            error.putString("message", "地理编码异常: " + e.getMessage());
-            result.putMap("error", error);
-            promise.resolve(result);
+            promise.reject("4004", "地理编码异常: " + e.getMessage());
         }
     }
 
     @ReactMethod
     public void reverseGeocoding(ReadableMap coordinate, int radius, Promise promise) {
         if (coordinate == null || !coordinate.hasKey("latitude") || !coordinate.hasKey("longitude")) {
-            WritableMap result = Arguments.createMap();
-            result.putBoolean("success", false);
-            WritableMap error = Arguments.createMap();
-            error.putString("code", "INVALID_PARAMETER");
-            error.putString("message", "坐标参数无效");
-            result.putMap("error", error);
-            promise.resolve(result);
+            promise.reject("1002", "坐标参数无效");
             return;
         }
 
@@ -146,52 +121,22 @@ public class GeocodingModule extends ReactContextBaseJavaModule implements
             if (!success) {
                 pendingPromises.remove(requestId);
                 requestTypes.remove(requestId);
-                
-                WritableMap result = Arguments.createMap();
-                result.putBoolean("success", false);
-                WritableMap error = Arguments.createMap();
-                error.putString("code", "REVERSE_GEOCODING_ERROR");
-                error.putString("message", "逆地理编码请求失败");
-                result.putMap("error", error);
-                promise.resolve(result);
+                promise.reject("4004", "逆地理编码请求失败");
             }
         } catch (Exception e) {
-            WritableMap result = Arguments.createMap();
-            result.putBoolean("success", false);
-            WritableMap error = Arguments.createMap();
-            error.putString("code", "REVERSE_GEOCODING_ERROR");
-            error.putString("message", "逆地理编码异常: " + e.getMessage());
-            result.putMap("error", error);
-            promise.resolve(result);
+            promise.reject("4004", "逆地理编码异常: " + e.getMessage());
         }
     }
 
     @ReactMethod
     public void searchPOI(ReadableMap options, Promise promise) {
-        if (options == null || !options.hasKey("keyword")) {
-            WritableMap result = Arguments.createMap();
-            result.putBoolean("success", false);
-            WritableMap error = Arguments.createMap();
-            error.putString("code", "INVALID_PARAMETER");
-            error.putString("message", "搜索关键词不能为空");
-            result.putMap("error", error);
-            promise.resolve(result);
+        if (options == null || !options.hasKey("keyword") || options.getString("keyword") == null || options.getString("keyword").trim().isEmpty()) {
+            promise.reject("1002", "搜索关键词不能为空");
             return;
         }
 
         try {
             String keyword = options.getString("keyword");
-            if (keyword == null || keyword.trim().isEmpty()) {
-                WritableMap result = Arguments.createMap();
-                result.putBoolean("success", false);
-                WritableMap error = Arguments.createMap();
-                error.putString("code", "INVALID_PARAMETER");
-                error.putString("message", "搜索关键词不能为空");
-                result.putMap("error", error);
-                promise.resolve(result);
-                return;
-            }
-
             String requestId = "poi_search_" + System.currentTimeMillis();
             pendingPromises.put(requestId, promise);
             requestTypes.put(requestId, "poi_search");
@@ -218,49 +163,24 @@ public class GeocodingModule extends ReactContextBaseJavaModule implements
             if (!success) {
                 pendingPromises.remove(requestId);
                 requestTypes.remove(requestId);
-                
-                WritableMap result = Arguments.createMap();
-                result.putBoolean("success", false);
-                WritableMap error = Arguments.createMap();
-                error.putString("code", "POI_SEARCH_ERROR");
-                error.putString("message", "POI搜索请求失败");
-                result.putMap("error", error);
-                promise.resolve(result);
+                promise.reject("4004", "POI搜索请求失败");
             }
         } catch (Exception e) {
-            WritableMap result = Arguments.createMap();
-            result.putBoolean("success", false);
-            WritableMap error = Arguments.createMap();
-            error.putString("code", "POI_SEARCH_ERROR");
-            error.putString("message", "POI搜索异常: " + e.getMessage());
-            result.putMap("error", error);
-            promise.resolve(result);
+            promise.reject("4004", "POI搜索异常: " + e.getMessage());
         }
     }
 
     @ReactMethod
     public void searchNearby(ReadableMap options, Promise promise) {
         if (options == null || !options.hasKey("location") || !options.hasKey("radius")) {
-            WritableMap result = Arguments.createMap();
-            result.putBoolean("success", false);
-            WritableMap error = Arguments.createMap();
-            error.putString("code", "INVALID_PARAMETER");
-            error.putString("message", "搜索位置和半径参数无效");
-            result.putMap("error", error);
-            promise.resolve(result);
+            promise.reject("1002", "搜索位置和半径参数无效");
             return;
         }
 
         try {
             ReadableMap location = options.getMap("location");
             if (location == null || !location.hasKey("latitude") || !location.hasKey("longitude")) {
-                WritableMap result = Arguments.createMap();
-                result.putBoolean("success", false);
-                WritableMap error = Arguments.createMap();
-                error.putString("code", "INVALID_PARAMETER");
-                error.putString("message", "搜索位置参数无效");
-                result.putMap("error", error);
-                promise.resolve(result);
+                promise.reject("1002", "搜索位置参数无效");
                 return;
             }
 
@@ -269,13 +189,7 @@ public class GeocodingModule extends ReactContextBaseJavaModule implements
             int radius = options.getInt("radius");
 
             if (radius <= 0) {
-                WritableMap result = Arguments.createMap();
-                result.putBoolean("success", false);
-                WritableMap error = Arguments.createMap();
-                error.putString("code", "INVALID_PARAMETER");
-                error.putString("message", "搜索半径必须大于0");
-                result.putMap("error", error);
-                promise.resolve(result);
+                promise.reject("1002", "搜索半径必须大于0");
                 return;
             }
 
@@ -306,52 +220,22 @@ public class GeocodingModule extends ReactContextBaseJavaModule implements
             if (!success) {
                 pendingPromises.remove(requestId);
                 requestTypes.remove(requestId);
-                
-                WritableMap result = Arguments.createMap();
-                result.putBoolean("success", false);
-                WritableMap error = Arguments.createMap();
-                error.putString("code", "NEARBY_SEARCH_ERROR");
-                error.putString("message", "周边搜索请求失败");
-                result.putMap("error", error);
-                promise.resolve(result);
+                promise.reject("4004", "周边搜索请求失败");
             }
         } catch (Exception e) {
-            WritableMap result = Arguments.createMap();
-            result.putBoolean("success", false);
-            WritableMap error = Arguments.createMap();
-            error.putString("code", "NEARBY_SEARCH_ERROR");
-            error.putString("message", "周边搜索异常: " + e.getMessage());
-            result.putMap("error", error);
-            promise.resolve(result);
+            promise.reject("4004", "周边搜索异常: " + e.getMessage());
         }
     }
 
     @ReactMethod
     public void searchSuggestion(ReadableMap options, Promise promise) {
-        if (options == null || !options.hasKey("keyword")) {
-            WritableMap result = Arguments.createMap();
-            result.putBoolean("success", false);
-            WritableMap error = Arguments.createMap();
-            error.putString("code", "INVALID_PARAMETER");
-            error.putString("message", "搜索关键词不能为空");
-            result.putMap("error", error);
-            promise.resolve(result);
+        if (options == null || !options.hasKey("keyword") || options.getString("keyword") == null || options.getString("keyword").trim().isEmpty()) {
+            promise.reject("1002", "搜索关键词不能为空");
             return;
         }
 
         try {
             String keyword = options.getString("keyword");
-            if (keyword == null || keyword.trim().isEmpty()) {
-                WritableMap result = Arguments.createMap();
-                result.putBoolean("success", false);
-                WritableMap error = Arguments.createMap();
-                error.putString("code", "INVALID_PARAMETER");
-                error.putString("message", "搜索关键词不能为空");
-                result.putMap("error", error);
-                promise.resolve(result);
-                return;
-            }
-
             String requestId = "suggestion_search_" + System.currentTimeMillis();
             pendingPromises.put(requestId, promise);
             requestTypes.put(requestId, "suggestion_search");
@@ -374,23 +258,10 @@ public class GeocodingModule extends ReactContextBaseJavaModule implements
             if (!success) {
                 pendingPromises.remove(requestId);
                 requestTypes.remove(requestId);
-                
-                WritableMap result = Arguments.createMap();
-                result.putBoolean("success", false);
-                WritableMap error = Arguments.createMap();
-                error.putString("code", "SUGGESTION_SEARCH_ERROR");
-                error.putString("message", "搜索建议请求失败");
-                result.putMap("error", error);
-                promise.resolve(result);
+                promise.reject("4004", "搜索建议请求失败");
             }
         } catch (Exception e) {
-            WritableMap result = Arguments.createMap();
-            result.putBoolean("success", false);
-            WritableMap error = Arguments.createMap();
-            error.putString("code", "SUGGESTION_SEARCH_ERROR");
-            error.putString("message", "搜索建议异常: " + e.getMessage());
-            result.putMap("error", error);
-            promise.resolve(result);
+            promise.reject("4004", "搜索建议异常: " + e.getMessage());
         }
     }
 
@@ -405,24 +276,15 @@ public class GeocodingModule extends ReactContextBaseJavaModule implements
 
         if (promise == null) return;
 
-        WritableMap resultMap = Arguments.createMap();
-        
         if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-            resultMap.putBoolean("success", false);
-            WritableMap error = Arguments.createMap();
-            error.putString("code", "GEOCODING_ERROR");
-            error.putString("message", getErrorMessage(result != null ? result.error : null));
-            resultMap.putMap("error", error);
+            promise.reject(getErrorCode(result != null ? result.error : null), getErrorMessage(result != null ? result.error : null));
         } else {
-            resultMap.putBoolean("success", true);
             WritableMap data = Arguments.createMap();
             data.putDouble("latitude", result.getLocation().latitude);
             data.putDouble("longitude", result.getLocation().longitude);
             data.putString("formattedAddress", result.getAddress() != null ? result.getAddress() : "");
-            resultMap.putMap("data", data);
+            promise.resolve(data);
         }
-        
-        promise.resolve(resultMap);
     }
 
     // 逆地理编码结果回调
@@ -436,16 +298,9 @@ public class GeocodingModule extends ReactContextBaseJavaModule implements
 
         if (promise == null) return;
 
-        WritableMap resultMap = Arguments.createMap();
-        
         if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-            resultMap.putBoolean("success", false);
-            WritableMap error = Arguments.createMap();
-            error.putString("code", "REVERSE_GEOCODING_ERROR");
-            error.putString("message", getErrorMessage(result != null ? result.error : null));
-            resultMap.putMap("error", error);
+            promise.reject(getErrorCode(result != null ? result.error : null), getErrorMessage(result != null ? result.error : null));
         } else {
-            resultMap.putBoolean("success", true);
             WritableMap data = Arguments.createMap();
             data.putString("formattedAddress", result.getAddress() != null ? result.getAddress() : "");
             
@@ -462,10 +317,8 @@ public class GeocodingModule extends ReactContextBaseJavaModule implements
             data.putString("business", result.getBusiness() != null ? result.getBusiness() : "");
             data.putString("sematicDescription", result.getSematicDescription() != null ? result.getSematicDescription() : "");
             
-            resultMap.putMap("data", data);
+            promise.resolve(data);
         }
-        
-        promise.resolve(resultMap);
     }
 
     // POI搜索结果回调
@@ -479,16 +332,9 @@ public class GeocodingModule extends ReactContextBaseJavaModule implements
 
         if (promise == null) return;
 
-        WritableMap resultMap = Arguments.createMap();
-        
         if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-            resultMap.putBoolean("success", false);
-            WritableMap error = Arguments.createMap();
-            error.putString("code", "POI_SEARCH_ERROR");
-            error.putString("message", getErrorMessage(result != null ? result.error : null));
-            resultMap.putMap("error", error);
+            promise.reject(getErrorCode(result != null ? result.error : null), getErrorMessage(result != null ? result.error : null));
         } else {
-            resultMap.putBoolean("success", true);
             WritableMap data = Arguments.createMap();
             
             int totalPages = result.getTotalPageNum();
@@ -513,10 +359,8 @@ public class GeocodingModule extends ReactContextBaseJavaModule implements
             }
             data.putArray("poiInfoList", poiList);
             
-            resultMap.putMap("data", data);
+            promise.resolve(data);
         }
-        
-        promise.resolve(resultMap);
     }
 
     // 搜索建议结果回调
@@ -530,17 +374,9 @@ public class GeocodingModule extends ReactContextBaseJavaModule implements
 
         if (promise == null) return;
 
-        WritableMap resultMap = Arguments.createMap();
-        
         if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-            resultMap.putBoolean("success", false);
-            WritableMap error = Arguments.createMap();
-            error.putString("code", "SUGGESTION_SEARCH_ERROR");
-            error.putString("message", getErrorMessage(result != null ? result.error : null));
-            resultMap.putMap("error", error);
+            promise.reject(getErrorCode(result != null ? result.error : null), getErrorMessage(result != null ? result.error : null));
         } else {
-            resultMap.putBoolean("success", true);
-            
             WritableArray suggestionList = Arguments.createArray();
             if (result.getAllSuggestions() != null) {
                 for (com.baidu.mapapi.search.sug.SuggestionInfo suggestion : result.getAllSuggestions()) {
@@ -561,10 +397,8 @@ public class GeocodingModule extends ReactContextBaseJavaModule implements
                 }
             }
             
-            resultMap.putArray("data", suggestionList);
+            promise.resolve(suggestionList);
         }
-        
-        promise.resolve(resultMap);
     }
 
     // 其他必需的回调方法
@@ -616,6 +450,30 @@ public class GeocodingModule extends ReactContextBaseJavaModule implements
                 return "还未完成鉴权，请在鉴权通过后重试";
             default:
                 return "搜索失败: " + error.name();
+        }
+    }
+
+    private String getErrorCode(SearchResult.ERRORNO error) {
+        if (error == null) {
+            return "4003"; // GEOCODING_NO_RESULT
+        }
+        
+        switch (error) {
+            case NO_ERROR:
+                return null; // Not an error
+            case RESULT_NOT_FOUND:
+                return "4003"; // GEOCODING_NO_RESULT
+            case AMBIGUOUS_KEYWORD:
+            case AMBIGUOUS_ROURE_ADDR:
+                return "4001"; // GEOCODING_INVALID_ADDRESS
+            case ST_TIMEOUT:
+            case NETWORK_ERROR:
+            case NETWORK_TIMEOUT:
+                return "1001"; // GENERAL_NETWORK_ERROR
+            case PERMISSION_UNFINISHED:
+                return "2001"; // INIT_INVALID_API_KEY
+            default:
+                return "4004"; // GEOCODING_SERVICE_UNAVAILABLE
         }
     }
 

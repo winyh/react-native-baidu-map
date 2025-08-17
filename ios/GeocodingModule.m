@@ -42,7 +42,7 @@ RCT_EXPORT_METHOD(geocoding:(NSString *)address
                   rejecter:(RCTPromiseRejectBlock)reject)
 {
     if (!address || address.length == 0) {
-        reject(@"INVALID_PARAMETER", @"地址不能为空", nil);
+        reject(@"1002", @"地址不能为空", nil);
         return;
     }
     
@@ -62,7 +62,7 @@ RCT_EXPORT_METHOD(geocoding:(NSString *)address
     BOOL success = [self.geoCodeSearch geoCode:option];
     if (!success) {
         [self.pendingPromises removeObjectForKey:requestId];
-        reject(@"GEOCODING_ERROR", @"地理编码请求失败", nil);
+        reject(@"4004", @"地理编码请求失败", nil);
     }
 }
 
@@ -72,7 +72,7 @@ RCT_EXPORT_METHOD(reverseGeocoding:(NSDictionary *)coordinate
                   rejecter:(RCTPromiseRejectBlock)reject)
 {
     if (!coordinate || !coordinate[@"latitude"] || !coordinate[@"longitude"]) {
-        reject(@"INVALID_PARAMETER", @"坐标参数无效", nil);
+        reject(@"1002", @"坐标参数无效", nil);
         return;
     }
     
@@ -92,7 +92,7 @@ RCT_EXPORT_METHOD(reverseGeocoding:(NSDictionary *)coordinate
     BOOL success = [self.geoCodeSearch reverseGeoCode:option];
     if (!success) {
         [self.pendingPromises removeObjectForKey:requestId];
-        reject(@"REVERSE_GEOCODING_ERROR", @"逆地理编码请求失败", nil);
+        reject(@"4004", @"逆地理编码请求失败", nil);
     }
 }
 
@@ -102,7 +102,7 @@ RCT_EXPORT_METHOD(searchPOI:(NSDictionary *)options
 {
     NSString *keyword = options[@"keyword"];
     if (!keyword || keyword.length == 0) {
-        reject(@"INVALID_PARAMETER", @"搜索关键词不能为空", nil);
+        reject(@"1002", @"搜索关键词不能为空", nil);
         return;
     }
     
@@ -131,7 +131,7 @@ RCT_EXPORT_METHOD(searchPOI:(NSDictionary *)options
     BOOL success = [self.poiSearch poiSearchInCity:option];
     if (!success) {
         [self.pendingPromises removeObjectForKey:requestId];
-        reject(@"POI_SEARCH_ERROR", @"POI搜索请求失败", nil);
+        reject(@"4004", @"POI搜索请求失败", nil);
     }
 }
 
@@ -141,13 +141,13 @@ RCT_EXPORT_METHOD(searchNearby:(NSDictionary *)options
 {
     NSDictionary *location = options[@"location"];
     if (!location || !location[@"latitude"] || !location[@"longitude"]) {
-        reject(@"INVALID_PARAMETER", @"搜索位置参数无效", nil);
+        reject(@"1002", @"搜索位置参数无效", nil);
         return;
     }
     
     NSNumber *radius = options[@"radius"];
     if (!radius || [radius intValue] <= 0) {
-        reject(@"INVALID_PARAMETER", @"搜索半径必须大于0", nil);
+        reject(@"1002", @"搜索半径必须大于0", nil);
         return;
     }
     
@@ -180,7 +180,7 @@ RCT_EXPORT_METHOD(searchNearby:(NSDictionary *)options
     BOOL success = [self.poiSearch poiSearchNearBy:option];
     if (!success) {
         [self.pendingPromises removeObjectForKey:requestId];
-        reject(@"NEARBY_SEARCH_ERROR", @"周边搜索请求失败", nil);
+        reject(@"4004", @"周边搜索请求失败", nil);
     }
 }
 
@@ -190,7 +190,7 @@ RCT_EXPORT_METHOD(searchSuggestion:(NSDictionary *)options
 {
     NSString *keyword = options[@"keyword"];
     if (!keyword || keyword.length == 0) {
-        reject(@"INVALID_PARAMETER", @"搜索关键词不能为空", nil);
+        reject(@"1002", @"搜索关键词不能为空", nil);
         return;
     }
     
@@ -215,7 +215,7 @@ RCT_EXPORT_METHOD(searchSuggestion:(NSDictionary *)options
     BOOL success = [self.suggestionSearch suggestionSearch:option];
     if (!success) {
         [self.pendingPromises removeObjectForKey:requestId];
-        reject(@"SUGGESTION_SEARCH_ERROR", @"搜索建议请求失败", nil);
+        reject(@"4004", @"搜索建议请求失败", nil);
     }
 }
 

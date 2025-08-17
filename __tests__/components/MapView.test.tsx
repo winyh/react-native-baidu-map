@@ -255,6 +255,41 @@ describe('MapView Component', () => {
     expect(getByTestId('marker-1')).toBeTruthy();
     expect(getByTestId('polyline-1')).toBeTruthy();
   });
+
+  describe('Snapshot Tests', () => {
+    it('renders correctly with default props', () => {
+      const { toJSON } = render(<MapView style={{ flex: 1 }} />);
+      expect(toJSON()).toMatchSnapshot();
+    });
+
+    it('renders with custom center and zoom', () => {
+      const center = { latitude: 39.915, longitude: 116.404 };
+      const zoom = 15;
+      const { toJSON } = render(<MapView style={{ flex: 1 }} center={center} zoom={zoom} />);
+      expect(toJSON()).toMatchSnapshot();
+    });
+
+    it('renders with satellite map type', () => {
+      const { toJSON } = render(<MapView style={{ flex: 1 }} mapType={MapType.SATELLITE} />);
+      expect(toJSON()).toMatchSnapshot();
+    });
+
+    it('renders with user location enabled', () => {
+      const { toJSON } = render(<MapView style={{ flex: 1 }} showsUserLocation />);
+      expect(toJSON()).toMatchSnapshot();
+    });
+
+    it('renders with some controls disabled', () => {
+      const { toJSON } = render(
+        <MapView
+          style={{ flex: 1 }}
+          showsCompass={false}
+          zoomControlsEnabled={false}
+        />
+      );
+      expect(toJSON()).toMatchSnapshot();
+    });
+  });
 });
 
 // Mock components for testing

@@ -56,7 +56,7 @@ public class BaiduMapModule extends ReactContextBaseJavaModule {
                 // 尝试从 AndroidManifest.xml 中读取 API Key
                 apiKey = getApiKeyFromManifest();
                 if (apiKey == null || apiKey.isEmpty()) {
-                    promise.reject("INVALID_API_KEY", 
+                    promise.reject("2001", 
                         "API Key cannot be null or empty. Please provide API Key or configure it in AndroidManifest.xml");
                     return;
                 }
@@ -64,11 +64,7 @@ public class BaiduMapModule extends ReactContextBaseJavaModule {
 
             // 检查权限
             if (!PermissionUtils.hasLocationPermission(reactContext)) {
-                WritableMap result = Arguments.createMap();
-                result.putBoolean("success", false);
-                result.putString("message", "Location permission is required for SDK initialization");
-                result.putString("code", "PERMISSION_REQUIRED");
-                promise.resolve(result);
+                promise.reject("3000", "Location permission is required for SDK initialization");
                 return;
             }
 
@@ -86,7 +82,7 @@ public class BaiduMapModule extends ReactContextBaseJavaModule {
             
         } catch (Exception e) {
             isSDKInitialized = false;
-            promise.reject("SDK_INIT_ERROR", "Failed to initialize SDK: " + e.getMessage(), e);
+            promise.reject("2000", "Failed to initialize SDK: " + e.getMessage(), e);
         }
     }
 
@@ -147,7 +143,7 @@ public class BaiduMapModule extends ReactContextBaseJavaModule {
     public void getCurrentLocation(ReadableMap options, Promise promise) {
         try {
             if (!isSDKInitialized) {
-                promise.reject("SDK_NOT_INITIALIZED", "SDK must be initialized before getting location");
+                promise.reject("2000", "SDK must be initialized before getting location");
                 return;
             }
 
@@ -165,7 +161,7 @@ public class BaiduMapModule extends ReactContextBaseJavaModule {
             });
             
         } catch (Exception e) {
-            promise.reject("LOCATION_ERROR", "Failed to get location: " + e.getMessage(), e);
+            promise.reject("3005", "Failed to get location: " + e.getMessage(), e);
         }
     }
 
@@ -213,7 +209,7 @@ public class BaiduMapModule extends ReactContextBaseJavaModule {
             
             promise.resolve(info);
         } catch (Exception e) {
-            promise.reject("GET_SDK_INFO_ERROR", "获取SDK信息失败: " + e.getMessage(), e);
+            promise.reject("1003", "获取SDK信息失败: " + e.getMessage(), e);
         }
     }
 
@@ -223,7 +219,7 @@ public class BaiduMapModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void takeSnapshot(ReadableMap options, Promise promise) {
         if (!isSDKInitialized) {
-            promise.reject("SDK_NOT_INITIALIZED", "SDK未初始化");
+            promise.reject("2000", "SDK未初始化");
             return;
         }
 
@@ -254,13 +250,13 @@ public class BaiduMapModule extends ReactContextBaseJavaModule {
                     
                     promise.resolve(result);
                 } catch (Exception e) {
-                    promise.reject("SNAPSHOT_ERROR", "截图失败: " + e.getMessage(), e);
+                    promise.reject("6000", "截图失败: " + e.getMessage(), e);
                 }
             });
 
         } catch (Exception e) {
             Log.e(TAG, "地图截图失败", e);
-            promise.reject("TAKE_SNAPSHOT_ERROR", "地图截图失败: " + e.getMessage(), e);
+            promise.reject("6000", "地图截图失败: " + e.getMessage(), e);
         }
     }
 
@@ -272,7 +268,7 @@ public class BaiduMapModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void setMapCustomStyle(ReadableMap styleOptions, Promise promise) {
         if (!isSDKInitialized) {
-            promise.reject("SDK_NOT_INITIALIZED", "SDK未初始化");
+            promise.reject("2000", "SDK未初始化");
             return;
         }
 
@@ -287,7 +283,7 @@ public class BaiduMapModule extends ReactContextBaseJavaModule {
             
             // 验证样式参数
             if (styleId.isEmpty() && styleJson.isEmpty()) {
-                promise.reject("INVALID_STYLE_PARAMS", "样式ID或样式JSON至少需要提供一个");
+                promise.reject("1002", "样式ID或样式JSON至少需要提供一个");
                 return;
             }
             
@@ -301,7 +297,7 @@ public class BaiduMapModule extends ReactContextBaseJavaModule {
 
         } catch (Exception e) {
             Log.e(TAG, "设置地图自定义样式失败", e);
-            promise.reject("SET_CUSTOM_STYLE_ERROR", "设置地图自定义样式失败: " + e.getMessage(), e);
+            promise.reject("6002", "设置地图自定义样式失败: " + e.getMessage(), e);
         }
     }
 
@@ -311,7 +307,7 @@ public class BaiduMapModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void addHeatMap(ReadableArray dataPoints, ReadableMap options, Promise promise) {
         if (!isSDKInitialized) {
-            promise.reject("SDK_NOT_INITIALIZED", "SDK未初始化");
+            promise.reject("2000", "SDK未初始化");
             return;
         }
 
@@ -321,7 +317,7 @@ public class BaiduMapModule extends ReactContextBaseJavaModule {
             // 实现热力图功能
             // 验证数据点
             if (dataPoints.size() == 0) {
-                promise.reject("INVALID_DATA_POINTS", "热力图数据点不能为空");
+                promise.reject("1002", "热力图数据点不能为空");
                 return;
             }
             
@@ -329,7 +325,7 @@ public class BaiduMapModule extends ReactContextBaseJavaModule {
             for (int i = 0; i < dataPoints.size(); i++) {
                 ReadableMap point = dataPoints.getMap(i);
                 if (!point.hasKey("latitude") || !point.hasKey("longitude")) {
-                    promise.reject("INVALID_DATA_POINT", "数据点必须包含latitude和longitude字段");
+                    promise.reject("1002", "数据点必须包含latitude和longitude字段");
                     return;
                 }
             }
@@ -353,7 +349,7 @@ public class BaiduMapModule extends ReactContextBaseJavaModule {
 
         } catch (Exception e) {
             Log.e(TAG, "添加热力图失败", e);
-            promise.reject("ADD_HEAT_MAP_ERROR", "添加热力图失败: " + e.getMessage(), e);
+            promise.reject("6000", "添加热力图失败: " + e.getMessage(), e);
         }
     }
 
@@ -363,7 +359,7 @@ public class BaiduMapModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void removeHeatMap(Promise promise) {
         if (!isSDKInitialized) {
-            promise.reject("SDK_NOT_INITIALIZED", "SDK未初始化");
+            promise.reject("2000", "SDK未初始化");
             return;
         }
 
@@ -381,7 +377,7 @@ public class BaiduMapModule extends ReactContextBaseJavaModule {
 
         } catch (Exception e) {
             Log.e(TAG, "移除热力图失败", e);
-            promise.reject("REMOVE_HEAT_MAP_ERROR", "移除热力图失败: " + e.getMessage(), e);
+            promise.reject("6000", "移除热力图失败: " + e.getMessage(), e);
         }
     }
 
@@ -393,7 +389,7 @@ public class BaiduMapModule extends ReactContextBaseJavaModule {
             result.putBoolean("enabled", locationManager.isLocationEnabled());
             promise.resolve(result);
         } catch (Exception e) {
-            promise.reject("LOCATION_ERROR", "Failed to check location service status: " + e.getMessage(), e);
+            promise.reject("3005", "Failed to check location service status: " + e.getMessage(), e);
         }
     }
 
@@ -401,7 +397,7 @@ public class BaiduMapModule extends ReactContextBaseJavaModule {
     public void setLocationOptions(ReadableMap options, Promise promise) {
         try {
             if (!isSDKInitialized) {
-                promise.reject("SDK_NOT_INITIALIZED", "SDK must be initialized before setting location options");
+                promise.reject("2000", "SDK must be initialized before setting location options");
                 return;
             }
 
@@ -414,7 +410,7 @@ public class BaiduMapModule extends ReactContextBaseJavaModule {
             promise.resolve(result);
             
         } catch (Exception e) {
-            promise.reject("LOCATION_ERROR", "Failed to set location options: " + e.getMessage(), e);
+            promise.reject("3005", "Failed to set location options: " + e.getMessage(), e);
         }
     }
 
@@ -434,7 +430,7 @@ public class BaiduMapModule extends ReactContextBaseJavaModule {
             promise.resolve(result);
             
         } catch (Exception e) {
-            promise.reject("LOCATION_ERROR", "Failed to get location options: " + e.getMessage(), e);
+            promise.reject("3005", "Failed to get location options: " + e.getMessage(), e);
         }
     }
 
@@ -491,7 +487,7 @@ public class BaiduMapModule extends ReactContextBaseJavaModule {
             promise.resolve(result);
             
         } catch (Exception e) {
-            promise.reject("PRIVACY_ERROR", "Failed to set privacy agreement: " + e.getMessage(), e);
+            promise.reject("1003", "Failed to set privacy agreement: " + e.getMessage(), e);
         }
     }
 
@@ -502,7 +498,7 @@ public class BaiduMapModule extends ReactContextBaseJavaModule {
             boolean agreed = sp.getBoolean("privacy_agreed", false);
             promise.resolve(agreed);
         } catch (Exception e) {
-            promise.reject("PRIVACY_ERROR", "Failed to check privacy agreement: " + e.getMessage(), e);
+            promise.reject("1003", "Failed to check privacy agreement: " + e.getMessage(), e);
         }
     }
 

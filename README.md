@@ -5,6 +5,10 @@
 
 一个功能丰富的 React Native 百度地图库，同时支持 Android 和 iOS 平台，提供一致的开发体验。
 
+## 🌐 在线文档
+
+查看我们的 [GitHub Pages 在线文档](https://winyh.github.io/react-native-baidu-map) 了解完整功能和使用方法。
+
 ## ✨ 功能亮点
 
 - **统一的 API**: 在 Android 和 iOS 上提供一致的组件和接口。

@@ -45,7 +45,7 @@ RCT_EXPORT_METHOD(initSDK:(NSString *)apiKey
     // 设置坐标系类型
     BOOL ret = [BMKMapManager setCoordinateTypeUsedInBaiduMapSDK:BMK_COORDTYPE_BD09LL];
     if (!ret) {
-        reject(@"INIT_ERROR", @"坐标系设置失败", nil);
+        reject(@"2000", @"坐标系设置失败", nil);
         return;
     }
     
@@ -62,7 +62,7 @@ RCT_EXPORT_METHOD(initSDK:(NSString *)apiKey
         resolve(@{@"success": @YES, @"message": @"SDK初始化成功"});
         RCTLogInfo(@"百度地图SDK初始化成功");
     } else {
-        reject(@"INIT_ERROR", @"SDK初始化失败，请检查API Key是否正确", nil);
+        reject(@"2001", @"SDK初始化失败，请检查API Key是否正确", nil);
         RCTLogError(@"百度地图SDK初始化失败");
     }
 }
@@ -80,14 +80,14 @@ RCT_EXPORT_METHOD(initSDK:(NSString *)apiKey
     self.locationManager.reGeocodeTimeout = 10;
 }
 
-RCT_EXPORT_METHOD(getSDKVersion:(RCTPromiseResolveBlock)resolve
+RCT_EXPORT_METHOD(getVersion:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 {
     NSString *version = [BMKMapManager getVersion];
     resolve(@{@"version": version ?: @"未知版本"});
 }
 
-RCT_EXPORT_METHOD(checkSDKStatus:(RCTPromiseResolveBlock)resolve
+RCT_EXPORT_METHOD(isSDKInitialized:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 {
     resolve(@{
@@ -96,7 +96,7 @@ RCT_EXPORT_METHOD(checkSDKStatus:(RCTPromiseResolveBlock)resolve
     });
 }
 
-RCT_EXPORT_METHOD(setPrivacyPolicy:(BOOL)agreed
+RCT_EXPORT_METHOD(setAgreePrivacy:(BOOL)agreed
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 {
@@ -108,12 +108,12 @@ RCT_EXPORT_METHOD(getCurrentLocation:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 {
     if (!self.isSDKInitialized) {
-        reject(@"SDK_NOT_INITIALIZED", @"SDK未初始化", nil);
+        reject(@"2000", @"SDK未初始化", nil);
         return;
     }
     
     if (!self.locationManager) {
-        reject(@"LOCATION_MANAGER_ERROR", @"定位管理器未初始化", nil);
+        reject(@"3005", @"定位管理器未初始化", nil);
         return;
     }
     
@@ -133,9 +133,10 @@ RCT_EXPORT_METHOD(getCurrentLocation:(RCTPromiseResolveBlock)resolve
 
 - (void)handleLocationResult:(BMKLocation *)location networkState:(BMKLocationNetworkState)state error:(NSError *)error {
     if (error) {
+        NSString *errorCode = [self getLocationErrorCode:error];
         NSString *errorMessage = [self getLocationErrorMessage:error];
         if (self.locationReject) {
-            self.locationReject(@"LOCATION_ERROR", errorMessage, error);
+            self.locationReject(errorCode, errorMessage, error);
             self.locationReject = nil;
             self.locationResolve = nil;
         }
@@ -179,7 +180,7 @@ RCT_EXPORT_METHOD(getCurrentLocation:(RCTPromiseResolveBlock)resolve
         RCTLogInfo(@"定位成功: %f, %f", location.location.coordinate.latitude, location.location.coordinate.longitude);
     } else {
         if (self.locationReject) {
-            self.locationReject(@"LOCATION_ERROR", @"无法获取位置信息", nil);
+            self.locationReject(@"3005", @"无法获取位置信息", nil);
             self.locationReject = nil;
             self.locationResolve = nil;
         }
@@ -213,16 +214,31 @@ RCT_EXPORT_METHOD(getCurrentLocation:(RCTPromiseResolveBlock)resolve
     }
 }
 
-RCT_EXPORT_METHOD(startLocationUpdates:(RCTPromiseResolveBlock)resolve
+- (NSString *)getLocationErrorCode:(NSError *)error {
+    switch (error.code) {
+        case kCLErrorLocationUnknown:
+            return @"3005"; // LOCATION_FAILURE
+        case kCLErrorDenied:
+            return @"3000"; // LOCATION_PERMISSION_DENIED
+        case kCLErrorNetwork:
+            return @"1001"; // GENERAL_NETWORK_ERROR
+        case kCLErrorGeocodeFoundNoResult:
+            return @"4003"; // GEOCODING_NO_RESULT
+        default:
+            return @"3005"; // LOCATION_FAILURE
+    }
+}
+
+RCT_EXPORT_METHOD(startLocationService:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 {
     if (!self.isSDKInitialized) {
-        reject(@"SDK_NOT_INITIALIZED", @"SDK未初始化", nil);
+        reject(@"2000", @"SDK未初始化", nil);
         return;
     }
     
     if (!self.locationManager) {
-        reject(@"LOCATION_MANAGER_ERROR", @"定位管理器未初始化", nil);
+        reject(@"3005", @"定位管理器未初始化", nil);
         return;
     }
     
@@ -235,7 +251,7 @@ RCT_EXPORT_METHOD(stopLocationUpdates:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 {
     if (!self.locationManager) {
-        reject(@"LOCATION_MANAGER_ERROR", @"定位管理器未初始化", nil);
+        reject(@"3005", @"定位管理器未初始化", nil);
         return;
     }
     
@@ -244,12 +260,12 @@ RCT_EXPORT_METHOD(stopLocationUpdates:(RCTPromiseResolveBlock)resolve
     RCTLogInfo(@"停止连续定位");
 }
 
-RCT_EXPORT_METHOD(setLocationConfig:(NSDictionary *)config
+RCT_EXPORT_METHOD(setLocationOptions:(NSDictionary *)config
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 {
     if (!self.locationManager) {
-        reject(@"LOCATION_MANAGER_ERROR", @"定位管理器未初始化", nil);
+        reject(@"3005", @"定位管理器未初始化", nil);
         return;
     }
     

@@ -1,8 +1,7 @@
 import { NativeModules } from 'react-native';
 import {
   LatLng,
-  MapMethodResult,
-  BaiduMapErrorCode,
+  ErrorCode,
 } from '../types';
 
 const { BaiduGeocodingModule: NativeGeocodingModule } = NativeModules;
@@ -110,40 +109,20 @@ export class GeocodingModule {
   /**
    * 地理编码 - 将地址转换为坐标
    */
-  static async geocoding(address: string, city?: string): Promise<MapMethodResult<GeocodingResult>> {
+  static async geocoding(address: string, city?: string): Promise<GeocodingResult> {
     if (!NativeGeocodingModule) {
-      return {
-        success: false,
-        error: {
-          code: BaiduMapErrorCode.SDK_NOT_INITIALIZED,
-          message: '地理编码模块未找到',
-        },
-      };
+      throw Object.assign(new Error('地理编码模块未找到'), {
+        code: ErrorCode.INIT_SDK_NOT_INITIALIZED,
+      });
     }
 
     if (!address || address.trim().length === 0) {
-      return {
-        success: false,
-        error: {
-          code: BaiduMapErrorCode.INVALID_PARAMETER,
-          message: '地址不能为空',
-        },
-      };
+      throw Object.assign(new Error('地址不能为空'), {
+        code: ErrorCode.GENERAL_INVALID_PARAMETER,
+      });
     }
 
-    try {
-      const result = await NativeGeocodingModule.geocoding(address, city);
-      return result;
-    } catch (error) {
-      return {
-        success: false,
-        error: {
-          code: BaiduMapErrorCode.UNKNOWN_ERROR,
-          message: error instanceof Error ? error.message : '地理编码失败',
-          nativeError: error,
-        },
-      };
-    }
+    return await NativeGeocodingModule.geocoding(address, city);
   }
 
   /**
@@ -152,241 +131,127 @@ export class GeocodingModule {
   static async reverseGeocoding(
     coordinate: LatLng,
     radius?: number
-  ): Promise<MapMethodResult<ReverseGeocodingResult>> {
+  ): Promise<ReverseGeocodingResult> {
     if (!NativeGeocodingModule) {
-      return {
-        success: false,
-        error: {
-          code: BaiduMapErrorCode.SDK_NOT_INITIALIZED,
-          message: '地理编码模块未找到',
-        },
-      };
+      throw Object.assign(new Error('地理编码模块未找到'), {
+        code: ErrorCode.INIT_SDK_NOT_INITIALIZED,
+      });
     }
 
     if (!coordinate || typeof coordinate.latitude !== 'number' || typeof coordinate.longitude !== 'number') {
-      return {
-        success: false,
-        error: {
-          code: BaiduMapErrorCode.INVALID_PARAMETER,
-          message: '坐标参数无效',
-        },
-      };
+      throw Object.assign(new Error('坐标参数无效'), {
+        code: ErrorCode.GENERAL_INVALID_PARAMETER,
+      });
     }
 
-    try {
-      const result = await NativeGeocodingModule.reverseGeocoding(coordinate, radius || 1000);
-      return result;
-    } catch (error) {
-      return {
-        success: false,
-        error: {
-          code: BaiduMapErrorCode.UNKNOWN_ERROR,
-          message: error instanceof Error ? error.message : '逆地理编码失败',
-          nativeError: error,
-        },
-      };
-    }
+    return await NativeGeocodingModule.reverseGeocoding(coordinate, radius || 1000);
   }
 
   /**
    * POI搜索
    */
-  static async searchPOI(options: POISearchOptions): Promise<MapMethodResult<POISearchResult>> {
+  static async searchPOI(options: POISearchOptions): Promise<POISearchResult> {
     if (!NativeGeocodingModule) {
-      return {
-        success: false,
-        error: {
-          code: BaiduMapErrorCode.SDK_NOT_INITIALIZED,
-          message: '地理编码模块未找到',
-        },
-      };
+      throw Object.assign(new Error('地理编码模块未找到'), {
+        code: ErrorCode.INIT_SDK_NOT_INITIALIZED,
+      });
     }
 
     if (!options.keyword || options.keyword.trim().length === 0) {
-      return {
-        success: false,
-        error: {
-          code: BaiduMapErrorCode.INVALID_PARAMETER,
-          message: '搜索关键词不能为空',
-        },
-      };
+      throw Object.assign(new Error('搜索关键词不能为空'), {
+        code: ErrorCode.GENERAL_INVALID_PARAMETER,
+      });
     }
 
-    try {
-      const searchOptions = {
-        ...options,
-        pageIndex: options.pageIndex || 0,
-        pageSize: options.pageSize || 10,
-        scope: options.scope || 1,
-      };
+    const searchOptions = {
+      ...options,
+      pageIndex: options.pageIndex || 0,
+      pageSize: options.pageSize || 10,
+      scope: options.scope || 1,
+    };
 
-      const result = await NativeGeocodingModule.searchPOI(searchOptions);
-      return result;
-    } catch (error) {
-      return {
-        success: false,
-        error: {
-          code: BaiduMapErrorCode.UNKNOWN_ERROR,
-          message: error instanceof Error ? error.message : 'POI搜索失败',
-          nativeError: error,
-        },
-      };
-    }
+    return await NativeGeocodingModule.searchPOI(searchOptions);
   }
 
   /**
    * 周边搜索
    */
-  static async searchNearby(options: NearbySearchOptions): Promise<MapMethodResult<POISearchResult>> {
+  static async searchNearby(options: NearbySearchOptions): Promise<POISearchResult> {
     if (!NativeGeocodingModule) {
-      return {
-        success: false,
-        error: {
-          code: BaiduMapErrorCode.SDK_NOT_INITIALIZED,
-          message: '地理编码模块未找到',
-        },
-      };
+      throw Object.assign(new Error('地理编码模块未找到'), {
+        code: ErrorCode.INIT_SDK_NOT_INITIALIZED,
+      });
     }
 
     if (!options.location || typeof options.location.latitude !== 'number' || typeof options.location.longitude !== 'number') {
-      return {
-        success: false,
-        error: {
-          code: BaiduMapErrorCode.INVALID_PARAMETER,
-          message: '搜索位置参数无效',
-        },
-      };
+      throw Object.assign(new Error('搜索位置参数无效'), {
+        code: ErrorCode.GENERAL_INVALID_PARAMETER,
+      });
     }
 
     if (!options.radius || options.radius <= 0) {
-      return {
-        success: false,
-        error: {
-          code: BaiduMapErrorCode.INVALID_PARAMETER,
-          message: '搜索半径必须大于0',
-        },
-      };
+      throw Object.assign(new Error('搜索半径必须大于0'), {
+        code: ErrorCode.GENERAL_INVALID_PARAMETER,
+      });
     }
 
-    try {
-      const searchOptions = {
-        ...options,
-        pageIndex: options.pageIndex || 0,
-        pageSize: options.pageSize || 10,
-        sortType: options.sortType || 'distance',
-      };
+    const searchOptions = {
+      ...options,
+      pageIndex: options.pageIndex || 0,
+      pageSize: options.pageSize || 10,
+      sortType: options.sortType || 'distance',
+    };
 
-      const result = await NativeGeocodingModule.searchNearby(searchOptions);
-      return result;
-    } catch (error) {
-      return {
-        success: false,
-        error: {
-          code: BaiduMapErrorCode.UNKNOWN_ERROR,
-          message: error instanceof Error ? error.message : '周边搜索失败',
-          nativeError: error,
-        },
-      };
-    }
+    return await NativeGeocodingModule.searchNearby(searchOptions);
   }
 
   /**
    * 搜索建议
    */
-  static async searchSuggestion(options: SuggestionSearchOptions): Promise<MapMethodResult<SuggestionInfo[]>> {
+  static async searchSuggestion(options: SuggestionSearchOptions): Promise<SuggestionInfo[]> {
     if (!NativeGeocodingModule) {
-      return {
-        success: false,
-        error: {
-          code: BaiduMapErrorCode.SDK_NOT_INITIALIZED,
-          message: '地理编码模块未找到',
-        },
-      };
+      throw Object.assign(new Error('地理编码模块未找到'), {
+        code: ErrorCode.INIT_SDK_NOT_INITIALIZED,
+      });
     }
 
     if (!options.keyword || options.keyword.trim().length === 0) {
-      return {
-        success: false,
-        error: {
-          code: BaiduMapErrorCode.INVALID_PARAMETER,
-          message: '搜索关键词不能为空',
-        },
-      };
+      throw Object.assign(new Error('搜索关键词不能为空'), {
+        code: ErrorCode.GENERAL_INVALID_PARAMETER,
+      });
     }
 
-    try {
-      const searchOptions = {
-        ...options,
-        cityLimit: options.cityLimit !== false, // 默认限制城市
-      };
+    const searchOptions = {
+      ...options,
+      cityLimit: options.cityLimit !== false, // 默认限制城市
+    };
 
-      const result = await NativeGeocodingModule.searchSuggestion(searchOptions);
-      return result;
-    } catch (error) {
-      return {
-        success: false,
-        error: {
-          code: BaiduMapErrorCode.UNKNOWN_ERROR,
-          message: error instanceof Error ? error.message : '搜索建议失败',
-          nativeError: error,
-        },
-      };
-    }
+    return await NativeGeocodingModule.searchSuggestion(searchOptions);
   }
 
   /**
    * 批量地理编码
    */
-  static async batchGeocoding(addresses: string[], city?: string): Promise<MapMethodResult<GeocodingResult[]>> {
+  static async batchGeocoding(addresses: string[], city?: string): Promise<GeocodingResult[]> {
     if (!addresses || addresses.length === 0) {
-      return {
-        success: false,
-        error: {
-          code: BaiduMapErrorCode.INVALID_PARAMETER,
-          message: '地址列表不能为空',
-        },
-      };
+      throw Object.assign(new Error('地址列表不能为空'), {
+        code: ErrorCode.GENERAL_INVALID_PARAMETER,
+      });
     }
 
-    try {
-      const results: GeocodingResult[] = [];
-      const errors: string[] = [];
+    const results = await Promise.allSettled(
+      addresses.map(address => this.geocoding(address, city))
+    );
 
-      // 逐个进行地理编码
-      for (const address of addresses) {
-        const result = await this.geocoding(address, city);
-        if (result.success && result.data) {
-          results.push(result.data);
-        } else {
-          errors.push(`${address}: ${result.error?.message || '编码失败'}`);
-        }
-      }
+    const successfulResults = results
+      .filter(result => result.status === 'fulfilled')
+      .map(result => (result as PromiseFulfilledResult<GeocodingResult>).value);
 
-      if (results.length === 0) {
-        return {
-          success: false,
-          error: {
-            code: BaiduMapErrorCode.UNKNOWN_ERROR,
-            message: `所有地址编码失败: ${errors.join(', ')}`,
-          },
-        };
-      }
-
-      return {
-        success: true,
-        data: results,
-        message: errors.length > 0 ? `部分地址编码失败: ${errors.join(', ')}` : undefined,
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: {
-          code: BaiduMapErrorCode.UNKNOWN_ERROR,
-          message: error instanceof Error ? error.message : '批量地理编码失败',
-          nativeError: error,
-        },
-      };
+    if (successfulResults.length === 0) {
+      throw new Error('所有地址编码失败');
     }
+
+    return successfulResults;
   }
 
   /**
@@ -395,56 +260,26 @@ export class GeocodingModule {
   static async batchReverseGeocoding(
     coordinates: LatLng[],
     radius?: number
-  ): Promise<MapMethodResult<ReverseGeocodingResult[]>> {
+  ): Promise<ReverseGeocodingResult[]> {
     if (!coordinates || coordinates.length === 0) {
-      return {
-        success: false,
-        error: {
-          code: BaiduMapErrorCode.INVALID_PARAMETER,
-          message: '坐标列表不能为空',
-        },
-      };
+      throw Object.assign(new Error('坐标列表不能为空'), {
+        code: ErrorCode.GENERAL_INVALID_PARAMETER,
+      });
     }
 
-    try {
-      const results: ReverseGeocodingResult[] = [];
-      const errors: string[] = [];
+    const results = await Promise.allSettled(
+      coordinates.map(coordinate => this.reverseGeocoding(coordinate, radius))
+    );
 
-      // 逐个进行逆地理编码
-      for (const coordinate of coordinates) {
-        const result = await this.reverseGeocoding(coordinate, radius);
-        if (result.success && result.data) {
-          results.push(result.data);
-        } else {
-          errors.push(`${coordinate.latitude},${coordinate.longitude}: ${result.error?.message || '编码失败'}`);
-        }
-      }
+    const successfulResults = results
+      .filter(result => result.status === 'fulfilled')
+      .map(result => (result as PromiseFulfilledResult<ReverseGeocodingResult>).value);
 
-      if (results.length === 0) {
-        return {
-          success: false,
-          error: {
-            code: BaiduMapErrorCode.UNKNOWN_ERROR,
-            message: `所有坐标编码失败: ${errors.join(', ')}`,
-          },
-        };
-      }
-
-      return {
-        success: true,
-        data: results,
-        message: errors.length > 0 ? `部分坐标编码失败: ${errors.join(', ')}` : undefined,
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: {
-          code: BaiduMapErrorCode.UNKNOWN_ERROR,
-          message: error instanceof Error ? error.message : '批量逆地理编码失败',
-          nativeError: error,
-        },
-      };
+    if (successfulResults.length === 0) {
+      throw new Error('所有坐标编码失败');
     }
+
+    return successfulResults;
   }
 }
 

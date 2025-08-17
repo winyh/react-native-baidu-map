@@ -10,6 +10,7 @@
     "src",
     "lib",
     "android",
+    "ios",
     "react-native-baidu-map.podspec",
     "!lib/typescript_definitions",
     "!**/__tests__",
@@ -56,7 +57,7 @@
   "bugs": {
     "url": "https://github.com/winyh/react-native-baidu-map/issues"
   },
-  "homepage": "https://github.com/winyh/react-native-baidu-map#readme",
+  "homepage": "https://winyh.github.io/react-native-baidu-map",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
@@ -100,49 +101,7 @@
     "react": "*",
     "react-native": "*"
   },
-  "engines": {
-    "node": ">=16.0.0",
-    "npm": ">=7.0.0"
-  },
-  "commitlint": {
-    "extends": [
-      "@commitlint/config-conventional"
-    ]
-  },
-  "release-it": {
-    "git": {
-      "commitMessage": "chore: release ${version}",
-      "tagName": "v${version}"
-    },
-    "npm": {
-      "publish": true
-    },
-    "github": {
-      "release": true
-    },
-    "plugins": {
-      "@release-it/conventional-changelog": {
-        "preset": "angular"
-      }
-    }
-  },
-  "react-native-builder-bob": {
-    "source": "src",
-    "output": "lib",
-    "targets": [
-      "commonjs",
-      "module",
-      [
-        "typescript",
-        {
-          "project": "tsconfig.build.json"
-        }
-      ]
-    ]
-  },
-  "codegenConfig": {
-    "name": "BaiduMapSpec",
-    "type": "modules",
-    "jsSrcsDir": "src"
+  "dependencies": {
+    "react-native-svg": "^12.1.0"
   }
 }
