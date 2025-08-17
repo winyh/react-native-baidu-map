@@ -7,7 +7,7 @@ import {
 import {
   MapViewProps,
   LatLng,
-  ErrorCode,
+  BaiduMapErrorCode,
 } from '../types';
 
 const COMPONENT_NAME = 'BaiduMapView';
@@ -44,7 +44,7 @@ export class MapView extends Component<MapViewProps> implements MapViewMethods {
     const handle = this.getMapHandle();
     if (handle === null) {
       throw Object.assign(new Error('MapView not found'), {
-        code: ErrorCode.GENERAL_INTERNAL_ERROR,
+        code: BaiduMapErrorCode.GENERAL_INTERNAL_ERROR,
       });
     }
 
@@ -53,7 +53,7 @@ export class MapView extends Component<MapViewProps> implements MapViewMethods {
     } else {
       throw Object.assign(new Error(`Method ${method} not found in BaiduMapModule`),
         {
-          code: ErrorCode.GENERAL_INTERNAL_ERROR,
+          code: BaiduMapErrorCode.GENERAL_INTERNAL_ERROR,
         }
       );
     }

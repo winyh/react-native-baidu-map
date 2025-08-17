@@ -1,9 +1,9 @@
 import { NativeModules } from 'react-native';
 import {
   BaiduMapConfig,
-  ErrorCode,
+  BaiduMapErrorCode,
+  MapMethodResult,
   CoordinateType,
-  CoordinateConvertResult,
   LatLng,
 } from '../types';
 
@@ -16,26 +16,46 @@ export class BaiduMapModule {
   /**
    * 初始化百度地图SDK
    */
-  static async initialize(config: BaiduMapConfig): Promise<void> {
+  static async initialize(config: BaiduMapConfig): Promise<MapMethodResult> {
     if (!NativeBaiduMapModule) {
-      throw Object.assign(new Error('原生百度地图模块未找到'), {
-        code: ErrorCode.INIT_SDK_NOT_INITIALIZED,
-      });
+      return {
+        success: false,
+        error: {
+          code: BaiduMapErrorCode.SDK_NOT_INITIALIZED,
+          message: '原生百度地图模块未找到',
+        },
+      };
     }
 
     if (!config.apiKey) {
-      throw Object.assign(new Error('API Key 不能为空'), {
-        code: ErrorCode.INIT_INVALID_API_KEY,
-      });
+      return {
+        success: false,
+        error: {
+          code: BaiduMapErrorCode.INVALID_API_KEY,
+          message: 'API Key 不能为空',
+        },
+      };
     }
 
     try {
-      await NativeBaiduMapModule.initSDK(config.apiKey);
-      this.isInitialized = true;
-      this.config = config;
+      const result = await NativeBaiduMapModule.initSDK(config.apiKey);
+      
+      if (result.success) {
+        this.isInitialized = true;
+        this.config = config;
+      }
+      
+      return result;
     } catch (error) {
       this.isInitialized = false;
-      throw error;
+      return {
+        success: false,
+        error: {
+          code: BaiduMapErrorCode.UNKNOWN_ERROR,
+          message: error instanceof Error ? error.message : '初始化失败',
+          nativeError: error,
+        },
+      };
     }
   }
 
@@ -46,8 +66,11 @@ export class BaiduMapModule {
     if (!NativeBaiduMapModule) {
       return false;
     }
+
     try {
-      return await NativeBaiduMapModule.isSDKInitialized();
+      const result = await NativeBaiduMapModule.isSDKInitialized();
+      this.isInitialized = result.success && result.data;
+      return this.isInitialized;
     } catch (error) {
       return false;
     }
@@ -56,13 +79,29 @@ export class BaiduMapModule {
   /**
    * 获取SDK版本信息
    */
-  static async getSDKVersion(): Promise<string> {
+  static async getSDKVersion(): Promise<MapMethodResult<string>> {
     if (!NativeBaiduMapModule) {
-      throw Object.assign(new Error('原生百度地图模块未找到'), {
-        code: ErrorCode.INIT_SDK_NOT_INITIALIZED,
-      });
+      return {
+        success: false,
+        error: {
+          code: BaiduMapErrorCode.SDK_NOT_INITIALIZED,
+          message: '原生百度地图模块未找到',
+        },
+      };
     }
-    return await NativeBaiduMapModule.getSDKVersion();
+
+    try {
+      return await NativeBaiduMapModule.getSDKVersion();
+    } catch (error) {
+      return {
+        success: false,
+        error: {
+          code: BaiduMapErrorCode.UNKNOWN_ERROR,
+          message: error instanceof Error ? error.message : '获取SDK版本失败',
+          nativeError: error,
+        },
+      };
+    }
   }
 
   /**
@@ -72,18 +111,49 @@ export class BaiduMapModule {
     coordinate: LatLng,
     from: CoordinateType,
     to: CoordinateType
-  ): Promise<LatLng> {
+  ): Promise<{ latitude: number, longitude: number, success: boolean, error?: string }> {
     if (!NativeBaiduMapModule) {
-      throw Object.assign(new Error('原生百度地图模块未找到'), {
-        code: ErrorCode.INIT_SDK_NOT_INITIALIZED,
-      });
+      return {
+        latitude: coordinate.latitude,
+        longitude: coordinate.longitude,
+        success: false,
+        error: '原生百度地图模块未找到',
+      };
     }
 
     if (from === to) {
-      return coordinate;
+      return {
+        latitude: coordinate.latitude,
+        longitude: coordinate.longitude,
+        success: true,
+      };
     }
 
-    return await NativeBaiduMapModule.convertCoordinate(coordinate, from, to);
+    try {
+      const result = await NativeBaiduMapModule.convertCoordinate(coordinate, from, to);
+      
+      if (result.success) {
+        return {
+          latitude: result.data.latitude,
+          longitude: result.data.longitude,
+          success: true,
+        };
+      } else {
+        return {
+          latitude: coordinate.latitude,
+          longitude: coordinate.longitude,
+          success: false,
+          error: result.error?.message || '坐标转换失败',
+        };
+      }
+    } catch (error) {
+      return {
+        latitude: coordinate.latitude,
+        longitude: coordinate.longitude,
+        success: false,
+        error: error instanceof Error ? error.message : '坐标转换失败',
+      };
+    }
   }
 
   /**
@@ -93,42 +163,105 @@ export class BaiduMapModule {
     coordinates: LatLng[],
     from: CoordinateType,
     to: CoordinateType
-  ): Promise<LatLng[]> {
+  ): Promise<Array<{ latitude: number, longitude: number, success: boolean, error?: string }>> {
     if (!NativeBaiduMapModule) {
-      throw Object.assign(new Error('原生百度地图模块未找到'), {
-        code: ErrorCode.INIT_SDK_NOT_INITIALIZED,
-      });
+      return coordinates.map(coord => ({
+        latitude: coord.latitude,
+        longitude: coord.longitude,
+        success: false,
+        error: '原生百度地图模块未找到',
+      }));
     }
 
     if (from === to) {
-      return coordinates;
+      return coordinates.map(coord => ({
+        latitude: coord.latitude,
+        longitude: coord.longitude,
+        success: true,
+      }));
     }
 
-    return await NativeBaiduMapModule.convertCoordinates(coordinates, from, to);
+    try {
+      const result = await NativeBaiduMapModule.convertCoordinates(coordinates, from, to);
+      
+      if (result.success && Array.isArray(result.data)) {
+        return result.data.map((coord: LatLng) => ({
+          latitude: coord.latitude,
+          longitude: coord.longitude,
+          success: true,
+        }));
+      } else {
+        return coordinates.map(coord => ({
+          latitude: coord.latitude,
+          longitude: coord.longitude,
+          success: false,
+          error: result.error?.message || '批量坐标转换失败',
+        }));
+      }
+    } catch (error) {
+      return coordinates.map(coord => ({
+        latitude: coord.latitude,
+        longitude: coord.longitude,
+        success: false,
+        error: error instanceof Error ? error.message : '批量坐标转换失败',
+      }));
+    }
   }
 
   /**
    * 清除地图缓存
    */
-  static async clearMapCache(): Promise<void> {
+  static async clearMapCache(): Promise<MapMethodResult> {
     if (!NativeBaiduMapModule) {
-      throw Object.assign(new Error('原生百度地图模块未找到'), {
-        code: ErrorCode.INIT_SDK_NOT_INITIALIZED,
-      });
+      return {
+        success: false,
+        error: {
+          code: BaiduMapErrorCode.SDK_NOT_INITIALIZED,
+          message: '原生百度地图模块未找到',
+        },
+      };
     }
-    await NativeBaiduMapModule.clearMapCache();
+
+    try {
+      return await NativeBaiduMapModule.clearMapCache();
+    } catch (error) {
+      return {
+        success: false,
+        error: {
+          code: BaiduMapErrorCode.UNKNOWN_ERROR,
+          message: error instanceof Error ? error.message : '清除缓存失败',
+          nativeError: error,
+        },
+      };
+    }
   }
 
   /**
    * 设置用户协议确认状态
    */
-  static async setAgreePrivacy(agree: boolean): Promise<void> {
+  static async setAgreePrivacy(agree: boolean): Promise<MapMethodResult> {
     if (!NativeBaiduMapModule) {
-      throw Object.assign(new Error('原生百度地图模块未找到'), {
-        code: ErrorCode.INIT_SDK_NOT_INITIALIZED,
-      });
+      return {
+        success: false,
+        error: {
+          code: BaiduMapErrorCode.SDK_NOT_INITIALIZED,
+          message: '原生百度地图模块未找到',
+        },
+      };
     }
-    await NativeBaiduMapModule.setAgreePrivacy(agree);
+
+    try {
+      return await NativeBaiduMapModule.setAgreePrivacy(agree);
+    } catch (error) {
+      return {
+        success: false,
+        error: {
+          code: BaiduMapErrorCode.UNKNOWN_ERROR,
+          message: error instanceof Error ? error.message : '设置用户协议状态失败',
+          nativeError: error,
+        },
+      };
+    }
   }
 
   /**
@@ -186,53 +319,13 @@ export class BaiduMapModule {
   }
 
   /**
-   * 地图动画移动到指定位置
+   * 获取当前位置（单次定位）
    */
-  static async animateToLocation(options: {
-    latitude: number;
-    longitude: number;
-    duration: number;
-  }): Promise<void> {
+  static async getCurrentLocation(options: any): Promise<any> {
     if (!NativeBaiduMapModule) {
       throw new Error('原生百度地图模块未找到');
     }
-    return await NativeBaiduMapModule.animateToLocation(options);
-  }
-
-  /**
-   * 地图动画缩放到指定级别
-   */
-  static async animateToZoom(options: {
-    zoomLevel: number;
-    duration: number;
-  }): Promise<void> {
-    if (!NativeBaiduMapModule) {
-      throw new Error('原生百度地图模块未找到');
-    }
-    return await NativeBaiduMapModule.animateToZoom(options);
-  }
-
-  /**
-   * 下载离线地图
-   */
-  static async downloadOfflineMap(options: {
-    cityId: string;
-    cityName: string;
-  }): Promise<{success: boolean, message: string}> {
-    if (!NativeBaiduMapModule) {
-      throw new Error('原生百度地图模块未找到');
-    }
-    return await NativeBaiduMapModule.downloadOfflineMap(options);
-  }
-
-  /**
-   * 获取离线地图列表
-   */
-  static async getOfflineMapList(): Promise<Array<{cityId: string, cityName: string, status: string}>> {
-    if (!NativeBaiduMapModule) {
-      throw new Error('原生百度地图模块未找到');
-    }
-    return await NativeBaiduMapModule.getOfflineMapList();
+    return await NativeBaiduMapModule.getCurrentLocation(options);
   }
 }
 

@@ -180,17 +180,17 @@ jobs:
   notify:
     name: Notify Success
     runs-on: ubuntu-latest
-    needs: [lint-and-test, build, android-build]
-    if: always()
+    needs: [publish]
+    if: always() && github.event_name == 'release'
     
     steps:
     - name: Notify on success
-      if: needs.lint-and-test.result == 'success' && needs.build.result == 'success' && needs.android-build.result == 'success'
+      if: needs.publish.result == 'success'
       run: |
-        echo "✅ CI/CD Pipeline completed successfully"
+        echo "🎉 Successfully published react-native-baidu-map@${{ github.event.release.tag_name }}"
         
     - name: Notify on failure
-      if: failure()
+      if: needs.publish.result == 'failure'
       run: |
-        echo "❌ CI/CD Pipeline failed"
+        echo "❌ Failed to publish react-native-baidu-map@${{ github.event.release.tag_name }}"
         exit 1

@@ -10,7 +10,7 @@ import {
  */
 export class ErrorHandler {
   // 错误码到错误信息的映射
-  private static readonly ERROR_MESSAGES: Record<BaiduMapErrorCode, string> = {
+  private static readonly ERROR_MESSAGES: Partial<Record<BaiduMapErrorCode, string>> = {
     [BaiduMapErrorCode.SDK_NOT_INITIALIZED]: '百度地图SDK未初始化，请先调用初始化方法',
     [BaiduMapErrorCode.INVALID_API_KEY]: 'API Key无效或未设置，请检查API Key配置',
     [BaiduMapErrorCode.LOCATION_PERMISSION_DENIED]: '定位权限被拒绝，请在设置中开启定位权限',
@@ -22,7 +22,7 @@ export class ErrorHandler {
   };
 
   // 错误码到用户友好提示的映射
-  private static readonly USER_FRIENDLY_MESSAGES: Record<BaiduMapErrorCode, string> = {
+  private static readonly USER_FRIENDLY_MESSAGES: Partial<Record<BaiduMapErrorCode, string>> = {
     [BaiduMapErrorCode.SDK_NOT_INITIALIZED]: '地图服务初始化失败，请重启应用',
     [BaiduMapErrorCode.INVALID_API_KEY]: '地图服务配置错误，请联系开发者',
     [BaiduMapErrorCode.LOCATION_PERMISSION_DENIED]: '需要定位权限才能使用此功能',
@@ -42,7 +42,7 @@ export class ErrorHandler {
   } as const;
 
   // 错误码到严重程度的映射
-  private static readonly ERROR_SEVERITY_MAP: Record<BaiduMapErrorCode, string> = {
+  private static readonly ERROR_SEVERITY_MAP: Partial<Record<BaiduMapErrorCode, string>> = {
     [BaiduMapErrorCode.SDK_NOT_INITIALIZED]: ErrorHandler.ERROR_SEVERITY.CRITICAL,
     [BaiduMapErrorCode.INVALID_API_KEY]: ErrorHandler.ERROR_SEVERITY.CRITICAL,
     [BaiduMapErrorCode.LOCATION_PERMISSION_DENIED]: ErrorHandler.ERROR_SEVERITY.HIGH,
@@ -154,7 +154,7 @@ export class ErrorHandler {
    * 获取错误的解决建议
    */
   static getResolutionSuggestion(error: BaiduMapError): string {
-    const suggestions: Record<BaiduMapErrorCode, string> = {
+    const suggestions: Partial<Record<BaiduMapErrorCode, string>> = {
       [BaiduMapErrorCode.SDK_NOT_INITIALIZED]: '请重启应用或联系开发者',
       [BaiduMapErrorCode.INVALID_API_KEY]: '请联系开发者检查API Key配置',
       [BaiduMapErrorCode.LOCATION_PERMISSION_DENIED]: '请前往设置开启定位权限',

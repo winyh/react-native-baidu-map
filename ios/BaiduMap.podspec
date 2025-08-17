@@ -3,11 +3,11 @@ Pod::Spec.new do |s|
   s.version      = "1.0.0"
   s.summary      = "React Native百度地图组件"
   s.description  = "基于百度地图iOS SDK v6.6.5的React Native地图组件，支持地图显示、定位、标注、覆盖物等功能"
-  s.homepage     = "https://github.com/winyh/react-native-baidu-map"
-  s.license      = { :type => "GPL-3.0-only", :file => "../LICENSE" }
-  s.author       = { "winyh" => "2712192471@qq.com" }
+  s.homepage     = "https://github.com/your-username/react-native-baidu-map"
+  s.license      = { :type => "MIT", :file => "../LICENSE" }
+  s.author       = { "Your Name" => "your.email@example.com" }
   s.platform     = :ios, "9.0"
-  s.source       = { :git => "https://github.com/winyh/react-native-baidu-map.git", :tag => "#{s.version}" }
+  s.source       = { :git => "https://github.com/your-username/react-native-baidu-map.git", :tag => "#{s.version}" }
 
   s.source_files = "*.{h,m}"
   s.requires_arc = true

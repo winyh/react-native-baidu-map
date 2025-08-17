@@ -5,10 +5,6 @@
 
 一个功能丰富的 React Native 百度地图库，同时支持 Android 和 iOS 平台，提供一致的开发体验。
 
-## 🌐 在线文档
-
-查看我们的 [GitHub Pages 在线文档](https://winyh.github.io/react-native-baidu-map) 了解完整功能和使用方法。
-
 ## ✨ 功能亮点
 
 - **统一的 API**: 在 Android 和 iOS 上提供一致的组件和接口。
@@ -20,75 +16,75 @@
 - **TypeScript 支持**: 提供完整的类型定义，提升开发体验和代码健壮性。
 - **自动链接**: 支持 React Native 0.60+ 的自动链接，无需手动修改原生项目配置。
 
-## 🔧 安装与配置
-
-### 1. 安装依赖
+## 🔧 安装
 
 ```bash
 npm install @react-native/winyh-baidu-map
 ```
 
-### 2. iOS 配置
+## 📚 使用文档
 
-#### a. 安装原生依赖
+- [详细使用指南](./USAGE.md) - 包含 API Key 配置、初始化和各种功能的使用方法
+- [API 参考](./docs/api.md) - 完整的 API 文档
+
+### iOS 配置
 
 ```bash
 cd ios && pod install
 ```
 
-#### b. 配置权限
+### Android 配置
 
-在您的 `ios/YourProjectName/Info.plist` 文件中，添加以下权限描述，以便应用可以访问用户位置：
+从版本 1.0.0 开始，Android 端支持统一的 API Key 配置方式。您可以通过以下任一方式配置：
 
-```xml
-<key>NSLocationWhenInUseUsageDescription</key>
-<string>我们需要您的位置信息来提供地图和定位服务。</string>
-<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-<string>我们需要您的位置信息来提供地图和定位服务。</string>
-<key>NSLocationAlwaysUsageDescription</key>
-<string>我们需要您的位置信息来提供地图和定位服务。</string>
+#### 方式一：在 gradle.properties 中配置（推荐）
+
+在您的项目根目录下的 `android/gradle.properties` 文件中添加：
+
+```properties
+# 百度地图 API Key
+baiduMapApiKey=YOUR_API_KEY_HERE
 ```
 
-#### c. 配置 API Key
+#### 方式二：在 local.properties 中配置
 
-在 `ios/YourProjectName/Info.plist` 中添加您的百度地图 API Key：
+在您的项目根目录下的 `android/local.properties` 文件中添加：
 
-```xml
-<key>BaiduMapAPI_Key</key>
-<string>YOUR_IOS_API_KEY</string>
+```properties
+# 百度地图 API Key
+baiduMapApiKey=YOUR_API_KEY_HERE
 ```
 
-### 3. Android 配置
+#### 方式三：在 AndroidManifest.xml 中直接配置
 
-#### a. 配置权限
-
-在您的 `android/app/src/main/AndroidManifest.xml` 文件中，确保以下权限已添加：
+在您的应用项目中的 [AndroidManifest.xml](file:///Users/winyh/Desktop/hpc/baidu-map/android/src/main/AndroidManifest.xml) 文件中添加：
 
 ```xml
-<uses-permission android:name="android.permission.INTERNET" />
-<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-```
-
-#### b. 配置 API Key
-
-推荐在 `android/app/src/main/AndroidManifest.xml` 的 `<application>` 标签内添加您的 API Key：
-
-```xml
-<application ...>
-  ...
-  <meta-data
-      android:name="com.baidu.lbsapi.API_KEY"
-      android:value="YOUR_ANDROID_API_KEY" />
-  ...
+<application>
+    <!-- 百度地图API Key -->
+    <meta-data
+        android:name="com.baidu.lbsapi.API_KEY"
+        android:value="YOUR_API_KEY_HERE" />
 </application>
 ```
-这样做之后，您在初始化 SDK 时就无需再次传入 `apiKey`。
+
+#### 方式四：在初始化时动态传入
+
+您也可以在初始化 SDK 时动态传入 API Key：
+
+```typescript
+import { BaiduMapModule } from '@react-native/winyh-baidu-map';
+
+// 初始化 SDK 时传入 API Key
+await BaiduMapModule.initialize({
+  apiKey: 'YOUR_API_KEY_HERE',
+  // 其他配置...
+});
+```
 
 ## 🚀 快速上手
 
-在使用地图前，您必须先同意隐私政策并初始化 SDK。
+在使用地图前，您必须先同意隐私政策并使用从百度地图开放平台申请的 AppKey 初始化 SDK。
 
 ```tsx
 import React, { useEffect } from 'react';
@@ -97,47 +93,40 @@ import {
   BaiduMapModule,
   MapView,
   Marker,
+  LocationModule,
 } from '@react-native/winyh-baidu-map';
 
 // 在应用启动时进行初始化
 const initializeSDK = async () => {
   try {
-    // 1. 同意隐私政策 (必须)
+    // 同意隐私政策
     await BaiduMapModule.setAgreePrivacy(true);
     
-    // 2. 初始化 SDK
-    // 如果您已在 AndroidManifest.xml 中配置了 API Key，则无需传入
-    await BaiduMapModule.initialize({
-      apiKey: 'YOUR_ANDROID_API_KEY_IF_NOT_IN_MANIFEST',
+    // 初始化 SDK
+    const result = await BaiduMapModule.initialize({
+      apiKey: 'YOUR_API_KEY_HERE', // 请替换为您自己的 API Key
+      enableLocation: true,
     });
-
-    console.log('Baidu Map SDK initialized successfully.');
-
+    
+    if (!result.success) {
+      Alert.alert('初始化失败', result.error?.message);
+    }
   } catch (error) {
     Alert.alert('初始化异常', error.message);
   }
 };
 
-initializeSDK();
+const App = () => {
+  useEffect(() => {
+    initializeSDK();
+  }, []);
 
-export default function App() {
   return (
     <View style={styles.container}>
-      <MapView
-        style={styles.map}
-        center={{ latitude: 39.915, longitude: 116.404 }} // 地图中心点：北京
-        zoom={15} // 缩放级别
-        showsUserLocation={true} // 显示用户位置
-        onMapLoaded={() => console.log('地图加载完成')}
-      >
-        <Marker
-          coordinate={{ latitude: 39.915, longitude: 116.404 }}
-          title="天安门广场"
-        />
-      </MapView>
+      <MapView style={styles.map} />
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -147,6 +136,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+
+export default App;
 ```
 
 ## 📚 API 文档

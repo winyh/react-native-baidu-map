@@ -6,7 +6,8 @@ module.exports = {
         packageImportPath: 'import io.github.winyh.baidumap.BaiduMapPackage;',
       },
       ios: {
-        sourceDir: '../node_modules/@react-native/winyh-baidu-map/ios/',
+        // iOS 暂不支持
+        project: null,
       },
     },
   },

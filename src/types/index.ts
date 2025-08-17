@@ -155,7 +155,7 @@ export interface CircleProps {
  * @enum {string}
  * @description 统一错误码枚举
  */
-export enum ErrorCode {
+export enum BaiduMapErrorCode {
   // --- 通用错误 (1000-1999) ---
   /** 未知错误 */
   GENERAL_UNKNOWN = '1000',
@@ -165,6 +165,16 @@ export enum ErrorCode {
   GENERAL_INVALID_PARAMETER = '1002',
   /** 原生层内部错误 */
   GENERAL_INTERNAL_ERROR = '1003',
+  
+  // 常用别名
+  /** 未知错误 (别名) */
+  UNKNOWN_ERROR = '1000',
+  /** 网络错误 (别名) */
+  NETWORK_ERROR = '1001',
+  /** 参数无效 (别名) */
+  INVALID_PARAMETER = '1002',
+  /** 坐标无效 (别名) */
+  INVALID_COORDINATE = '1004',
 
   // --- SDK 初始化 (2000-2999) ---
   /** SDK 未初始化 */
@@ -173,6 +183,12 @@ export enum ErrorCode {
   INIT_INVALID_API_KEY = '2001',
   /** 车牌号错误 (特定功能使用) */
   INIT_LICENSE_PLATE_ERROR = '2002',
+  
+  // 常用别名
+  /** SDK 未初始化 (别名) */
+  SDK_NOT_INITIALIZED = '2000',
+  /** API Key 无效 (别名) */
+  INVALID_API_KEY = '2001',
 
   // --- 定位服务 (3000-3999) ---
   /** 定位权限被拒绝 */
@@ -224,7 +240,7 @@ export enum ErrorCode {
 }
 
 export interface BaiduMapError {
-  code: ErrorCode;
+  code: BaiduMapErrorCode;
   message: string;
   nativeError?: any;
 }
@@ -305,3 +321,6 @@ export interface MapMethodResult<T = any> {
 // 导出所有事件类型的联合类型
 export type MapEvent = MapClickEvent | MapLongClickEvent | MapStatusChangeEvent;
 export type MarkerEvent = MarkerClickEvent | MarkerDragEvent;
+// 向后兼容的别名
+export const ErrorCode = BaiduMapErrorCode;
+export type ErrorCode = BaiduMapErrorCode;
