@@ -20,25 +20,75 @@
 - **TypeScript 支持**: 提供完整的类型定义，提升开发体验和代码健壮性。
 - **自动链接**: 支持 React Native 0.60+ 的自动链接，无需手动修改原生项目配置。
 
-## 🔧 安装
+## 🔧 安装与配置
+
+### 1. 安装依赖
 
 ```bash
 npm install @react-native/winyh-baidu-map
 ```
 
-### iOS 配置
+### 2. iOS 配置
+
+#### a. 安装原生依赖
 
 ```bash
 cd ios && pod install
 ```
 
-### Android 配置
+#### b. 配置权限
 
-无需额外配置。本库通过代码动态设置 AppKey，您只需要在初始化时传入即可。
+在您的 `ios/YourProjectName/Info.plist` 文件中，添加以下权限描述，以便应用可以访问用户位置：
+
+```xml
+<key>NSLocationWhenInUseUsageDescription</key>
+<string>我们需要您的位置信息来提供地图和定位服务。</string>
+<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+<string>我们需要您的位置信息来提供地图和定位服务。</string>
+<key>NSLocationAlwaysUsageDescription</key>
+<string>我们需要您的位置信息来提供地图和定位服务。</string>
+```
+
+#### c. 配置 API Key
+
+在 `ios/YourProjectName/Info.plist` 中添加您的百度地图 API Key：
+
+```xml
+<key>BaiduMapAPI_Key</key>
+<string>YOUR_IOS_API_KEY</string>
+```
+
+### 3. Android 配置
+
+#### a. 配置权限
+
+在您的 `android/app/src/main/AndroidManifest.xml` 文件中，确保以下权限已添加：
+
+```xml
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+```
+
+#### b. 配置 API Key
+
+推荐在 `android/app/src/main/AndroidManifest.xml` 的 `<application>` 标签内添加您的 API Key：
+
+```xml
+<application ...>
+  ...
+  <meta-data
+      android:name="com.baidu.lbsapi.API_KEY"
+      android:value="YOUR_ANDROID_API_KEY" />
+  ...
+</application>
+```
+这样做之后，您在初始化 SDK 时就无需再次传入 `apiKey`。
 
 ## 🚀 快速上手
 
-在使用地图前，您必须先同意隐私政策并使用从百度地图开放平台申请的 AppKey 初始化 SDK。
+在使用地图前，您必须先同意隐私政策并初始化 SDK。
 
 ```tsx
 import React, { useEffect } from 'react';
@@ -47,7 +97,6 @@ import {
   BaiduMapModule,
   MapView,
   Marker,
-  LocationModule,
 } from '@react-native/winyh-baidu-map';
 
 // 在应用启动时进行初始化
@@ -57,14 +106,13 @@ const initializeSDK = async () => {
     await BaiduMapModule.setAgreePrivacy(true);
     
     // 2. 初始化 SDK
-    const result = await BaiduMapModule.initialize({
-      apiKey: 'YOUR_ANDROID_API_KEY', // 替换为您的 Android AppKey
-      // iOS AppKey 会在 Info.plist 中配置
+    // 如果您已在 AndroidManifest.xml 中配置了 API Key，则无需传入
+    await BaiduMapModule.initialize({
+      apiKey: 'YOUR_ANDROID_API_KEY_IF_NOT_IN_MANIFEST',
     });
 
-    if (!result.success) {
-      Alert.alert('初始化失败', result.error?.message);
-    }
+    console.log('Baidu Map SDK initialized successfully.');
+
   } catch (error) {
     Alert.alert('初始化异常', error.message);
   }
